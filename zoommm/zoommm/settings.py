@@ -125,3 +125,7 @@ EMAIL_USER_TLS = True
 TIANXINGPAYURL = "https://pay.yi-zhifu.cn"
 TINAXINGID = 1238
 TINAXINGKEY = "zB7ofiiImTtBiK7P7KPTiDIpfRfKm9et"
+
+
+# side
+SIDEBACKENDURL = "https://subscribe.voteinfo.life/api/v1/side/"

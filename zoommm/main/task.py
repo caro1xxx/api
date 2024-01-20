@@ -2,11 +2,10 @@ import django
 django.setup()
 from celery import shared_task
 from django.core.mail import send_mail
-from main.models import Invites,Member,Orders,User,Plans
+from main.models import Invites,Member,Orders,Plans
 from zoommm.settings import EMAIL_HOST_USER
 from django.core.cache import cache
-from main.tools import getCurrentTimestamp
-from main.tools import generateRandomString,encrypteSHA224,getMonthOverResetDate
+from main.tools import generateRandomString,getMonthOverResetDate,postCreateNodeUser,getCurrentTimestamp
 
 @shared_task  # 邮件
 def asyncSendMail(subject, message, recipientMail):
@@ -32,7 +31,7 @@ def asyncAddProperty(param,out_trade_no):
   if ordersFields.plan.time > 30:
     loopFlow = ordersFields.plan.flow / (ordersFields.plan.time / 30)
     memberFields.nextReset = getMonthOverResetDate()
-  User.objects.create(username=ordersFields.user,password=encrypteSHA224(plainText),plainText=plainText,quota=loopFlow*1073741824)
+  createResult = postCreateNodeUser(ordersFields.user.email,plainText,loopFlow*1073741824)
   planFields = Plans.objects.filter(no=ordersFields.plan.no).first()
   if planFields is not None:
     planFields.stock = planFields.stock - 1

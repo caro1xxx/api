@@ -58,12 +58,6 @@ def encrypteSHA224(value):
     return hashlib.sha224(value.encode()).hexdigest()
 
 
-def parsePingOutput(output):
-    lines = output.split('\n')
-    last_line = lines[-2]
-    latency_str = last_line.split('=')[-1].strip().split()[0]
-    return latency_str
-
 
 def createOrder(data):
     response = requests.post(settings.TIANXINGPAYURL+"/mapi.php", data=data)
@@ -79,3 +73,34 @@ def getClientIp(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+def getUserFlow(username):
+    response = requests.get(f"{settings.SIDEBACKENDURL}flowproperty?username={username}")
+    if response.status_code == 200:
+        return response.text
+    else:
+        return False
+
+
+def getSubDispatch(username):
+    response = requests.get(f"{settings.SIDEBACKENDURL}dispatch?username={username}")
+    if response.status_code == 200:
+        return response.text
+    else:
+        return False
+
+
+def getDelay(nodeTag):
+    response = requests.get(f"{settings.SIDEBACKENDURL}ping?nodeTag={nodeTag}")
+    if response.status_code == 200:
+        return response.text
+    else:
+        return False
+
+
+def postCreateNodeUser(username,plainText,quota):
+    response = requests.get(f"{settings.SIDEBACKENDURL}create?username={username}&plainText={plainText}&quota={quota}")
+    if response.status_code == 200:
+        return response.text
+    else:
+        return False

@@ -1,12 +1,11 @@
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from main.models import Node
 from django.core import serializers
 import json
-from main.tools import parsePingOutput
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
-import subprocess
+from main.tools import getDelay
+from main.task import asyncSendMail
 
 
 class Ping(APIView):
@@ -14,11 +13,26 @@ class Ping(APIView):
   def get(self, request, *args, **kwargs):
       ret = {'code': 200, 'message': '成功'}
       try:
-        nodeTag =  request.GET.get('node', None)
-        domain = Node.objects.filter(pk=int(nodeTag)).first().domain.replace(":443","")
-        result = subprocess.run(['ping', '-c', '4', domain], capture_output=True, text=True)
-        output = result.stdout
-        ret['ms'] = parsePingOutput(output).split("/")
+        nodeTag = request.GET.get('node', None)
+        delay = getDelay(nodeTag)
+        if delay == False:
+          ret['code'] = 500
+          ret['message'] = "timeout"
+        ret['ms'] = json.loads(delay)['ms']
+        return JsonResponse(ret)
+      except Exception as e:
+        print(str(e))
+        return JsonResponse({'code': 500, 'message': "timeout"})
+
+
+class MailTools(APIView):
+  def post(self, request, *args, **kwargs):
+      ret = {'code': 200, 'message': '成功'}
+      try:
+        topice = json.loads(request.body).get('topice', None)
+        content = json.loads(request.body).get('content', None)
+        email = json.loads(request.body).get('email', None)
+        asyncSendMail.delay(topice,content,[email])
         return JsonResponse(ret)
       except Exception as e:
         print(str(e))

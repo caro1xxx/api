@@ -1,9 +1,9 @@
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from main.models import Member,Plans,Orders,DiscountCode,User,Node,Invites
+from main.models import Member,Plans,Orders,DiscountCode,Invites
 from django.core import serializers
 import json
-from main.tools import checkParams,encrypteToken,getCurrentTimestamp,generateRandomString,decodeToken,encrypteSHA224,createOrder,getClientIp,toMD5
+from main.tools import checkParams,encrypteToken,getCurrentTimestamp,generateRandomString,decodeToken,encrypteSHA224,createOrder,getClientIp,toMD5,getUserFlow,getSubDispatch
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from main.task import asyncAddInviteUser
@@ -67,7 +67,6 @@ class Profile(APIView):
         try:
             username = request.payload_data["username"]
             memberFields = Member.objects.filter(email=username).first()
-            userFields = User.objects.filter(username=memberFields).first()
             ret['data'] = {
                 "plan":memberFields.plan.title,
                 "subLink":"",
@@ -82,10 +81,12 @@ class Profile(APIView):
                 "cloudRules":memberFields.cloudRules,
                 "reset":memberFields.nextReset
             }
-            if userFields is not None:
+            userFlow = getUserFlow(memberFields.email)
+            if userFlow != False:
+                jsonUserFlow = json.loads(userFlow)
                 ret['data']["subLink"] = "link"
-                ret['data']['used'] = userFields.download+userFields.upload
-                ret['data']['remaining'] =userFields.quota - (userFields.download+userFields.upload)
+                ret['data']['used'] = jsonUserFlow["download"]+jsonUserFlow["upload"]
+                ret['data']['remaining'] =jsonUserFlow["quota"] - (jsonUserFlow["download"]+jsonUserFlow["upload"])
             return JsonResponse(ret)
         except Exception as e:
             print(str(e))
@@ -100,17 +101,14 @@ class Advanced(APIView):
             rules = request.GET.get('rules', None)
             username = request.payload_data["username"]
             memberFields = Member.objects.filter(email=username).first()
-            userFields = User.objects.filter(username=memberFields).first()
-            if sub is not None:
-                if memberFields.expireTime > getCurrentTimestamp():
-                    ret['data'] = {
-                        "convert":f"https://subscribe.voteinfo.life/api/v2/client/ZOOM%E6%9C%BA%E5%9C%BA?token={userFields.plainText}",
-                    }
-                else:
-                    ret['code'] = 412
-                    ret['message'] = "未订阅"
-            else:
-                pass
+            if memberFields.expireTime < getCurrentTimestamp():
+                ret['code'] = 412
+                ret['message'] = "未订阅"
+            dispatch = getSubDispatch(username)
+            if dispatch == False:
+                ret['code'] = 432
+                ret['message'] = '系统错误,请刷新网页'
+            ret['data'] = {"convert":json.loads(dispatch)["convert"],}
             return JsonResponse(ret)
         except Exception as e:
             print(str(e))

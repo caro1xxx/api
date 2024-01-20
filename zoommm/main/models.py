@@ -62,20 +62,6 @@ class Servers(models.Model):
   openai = models.BooleanField(default=True)
   nodeTag = models.IntegerField(null=True)
 
-# trojan-go 持久化
-class User(models.Model):
-  id = models.AutoField(primary_key=True)
-  username = models.ForeignKey(Member, on_delete=models.CASCADE)
-  password = models.CharField(max_length=56)
-  plainText = models.CharField(max_length=16)
-  quota = models.BigIntegerField(default=0)
-  download = models.PositiveIntegerField(default=0)
-  upload = models.PositiveIntegerField(default=0)
-  class Meta:
-      db_table = 'users'
-      indexes = [
-          models.Index(fields=['password'])
-      ]
 
 
 class Invites(models.Model):
@@ -84,17 +70,3 @@ class Invites(models.Model):
   inviteTime = models.IntegerField()
   subscription = models.BooleanField(default=False)
   commission = models.CharField(max_length=12,default="0")
-
-
-class Node(models.Model):
-  domain = models.CharField(max_length=64,unique=True,db_index=True)
-  protocol = models.CharField(max_length=64,default="trojan-go")
-  sni = models.CharField(max_length=64,default="microsoft.com")
-  type = models.CharField(max_length=32,default="ws")
-  path = models.CharField(max_length=32)
-  shaEncryption = models.CharField(max_length=64,default="aes-128-gcm",null=True)
-  encryptionKey = models.CharField(max_length=16,null=True)
-  tag = models.TextField()
-  sumTraffice = models.IntegerField()
-  usedTraffice = models.FloatField(default=0.0)
-  ban = models.BooleanField(default=False)

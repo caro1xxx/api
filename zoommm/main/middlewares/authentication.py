@@ -15,7 +15,7 @@ class CheckAccessToken(MiddlewareMixin):
             pass
 
         if requestMethods == 'POST':
-            allowPath = ["login","register","order","discount"]
+            allowPath = ["login","register","order","discount","mailTools"]
             pass
 
         if requestMethods == 'PUT':
