@@ -104,3 +104,11 @@ def postCreateNodeUser(username,plainText,quota):
         return response.text
     else:
         return False
+
+
+def clearExpiredUseToSide(username):
+    response = requests.get(f"{settings.SIDEBACKENDURL}expired?username={username}&auth={settings.SIDERKEY}")
+    if response.status_code == 200:
+        return response.text
+    else:
+        return False

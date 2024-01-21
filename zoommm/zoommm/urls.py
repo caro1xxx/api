@@ -2,7 +2,7 @@ from django.urls import re_path, path
 from main.views.user import Login,Register,Order,Discount,Profile,Advanced,Invite
 from main.views.plan import Plan
 from main.views.server import Server
-from main.views.admin import PayCallback
+from main.views.admin import PayCallback,Corn
 from main.views.tools import Ping,MailTools
 
 urlpatterns = [
@@ -20,4 +20,5 @@ urlpatterns = [
 
     # admin
     re_path(r'^api/v1/zoommm/paymentStatus$', PayCallback.as_view()),
+    re_path(r'^api/v1/zoommm/corn$', Corn.as_view()),
 ]

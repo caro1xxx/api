@@ -12,6 +12,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'main',
+    'django_apscheduler'
 ]
 
 MIDDLEWARE = [
@@ -128,4 +129,8 @@ TINAXINGKEY = "zB7ofiiImTtBiK7P7KPTiDIpfRfKm9et"
 
 
 # side
-SIDEBACKENDURL = "https://subscribe.voteinfo.life/api/v1/side/"
+SIDEBACKENDURL = "https://side.voteinfo.life/api/v1/side/"
+SIDERKEY = "7cBm7JdBU2i84y"
+
+# scheduler
+DJANGO_APSCHEDULER_EXECUTION_LOG = True

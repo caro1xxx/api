@@ -11,7 +11,7 @@ class CheckAccessToken(MiddlewareMixin):
         requestMethods = str(request.method)
         allowPath = []
         if requestMethods == 'GET':
-            allowPath = ["plans","server","order","traffic","gfwBan","ping","paymentStatus"]
+            allowPath = ["plans","server","order","traffic","gfwBan","ping","paymentStatus",'corn']
             pass
 
         if requestMethods == 'POST':

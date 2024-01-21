@@ -6,6 +6,8 @@ from main.models import Invites,Member,Orders,Plans
 from zoommm.settings import EMAIL_HOST_USER
 from django.core.cache import cache
 from main.tools import generateRandomString,getMonthOverResetDate,postCreateNodeUser,getCurrentTimestamp
+import requests
+
 
 @shared_task  # 邮件
 def asyncSendMail(subject, message, recipientMail):
@@ -25,6 +27,7 @@ def asyncAddProperty(param,out_trade_no):
   memberFields = Member.objects.filter(email=param).first()
   ordersFields = Orders.objects.filter(no=out_trade_no,status=False).first()
   memberFields.expireTime = getCurrentTimestamp()+ordersFields.plan.time*60*60*24 if memberFields.expireTime <= getCurrentTimestamp() else memberFields.expireTime + ordersFields.plan.time*60*60*24
+  requests.get(f"http://127.0.0.1:8001/api/v1/zoommm/corn?taskName=clearUser&excuteTime={memberFields.expireTime}&target={memberFields.email}")
   memberFields.plan = ordersFields.plan
   plainText = generateRandomString(16)
   loopFlow = ordersFields.plan.flow
