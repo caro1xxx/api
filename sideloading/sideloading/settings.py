@@ -85,3 +85,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MAIN_BACKEN = "http://154.204.26.79:8001/api/v1/zoommm/"
 ADMIN_EMAIL = 'caro1xxxhv@gmail.com'
+
+COCPTOKEY = "7cBm7JdBU2i84y"

@@ -5,7 +5,7 @@ from convert.models import User,Node
 import json
 import subprocess
 from flow.tools import parsePingOutput,getCurrentYMD,encrypteSHA224
-from sideloading.settings import MAIN_BACKEN,ADMIN_EMAIL
+from sideloading.settings import MAIN_BACKEN,ADMIN_EMAIL,COCPTOKEY
 import requests
 
 
@@ -103,6 +103,28 @@ class createUser(APIView):
       plainText = request.GET.get('plainText', None)
       quota = request.GET.get('quota', None)
       User.objects.create(username=username,password=encrypteSHA224(plainText),plainText=plainText,quota=int(float(quota)))
+      return JsonResponse(ret)
+    except Exception as e:
+      print(str(e))
+      return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
+
+  
+class userExpired(APIView):
+  def get(self, request, *args, **kwargs):
+    ret = {'code': 200, 'message': '成功'}
+    try:
+      username = request.GET.get('username', None)
+      auth = request.GET.get('auth', None)
+      if auth != COCPTOKEY:
+        ret["code"] = 400
+        ret["message"] = "非法"
+        return JsonResponse(ret)
+      userFields = User.objects.filter(username=username).first()
+      if userFields is not None:
+        allNode = Node.objects.all()
+        for node in allNode:
+          subprocess.run(['/root/zoom/sideloading/trojan/trojan-go', '-api-addr', f'{node.ip}:30189', '-api','set','-delete-profile','-target-password',userFields.plainText], capture_output=True, text=True)
+        User.objects.filter(username=username).delete()
       return JsonResponse(ret)
     except Exception as e:
       print(str(e))
