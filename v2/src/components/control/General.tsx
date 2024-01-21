@@ -1,6 +1,6 @@
 import { useReactive, useRequest } from "ahooks";
 import styled from "styled-components";
-import { Switch, Input, Divider, Spin } from "antd";
+import { Switch, Input, Divider, Spin, Progress } from "antd";
 import { formatTimestamp, formatBytes, getCurrentTimeStamp } from "../../utils/tools";
 import { Link } from "react-router-dom";
 import { Profile } from "../../api/user";
@@ -54,14 +54,9 @@ const General = (props: Props) => {
         type: "date",
       },
       {
-        title: "已使用流量",
-        value: "",
-        type: "text",
-      },
-      {
-        title: "剩余流量",
-        value: "",
-        type: "text",
+        title: "已使用/剩余流量",
+        value: [0, 0],
+        type: "flow",
       },
     ],
     baseConfig: [
@@ -112,15 +107,17 @@ const General = (props: Props) => {
         state.subConfig[0].value = result.data.plan + "订阅";
         state.subConfig[1].value = result.data.subLink;
         state.subConfig[2].value = result.data.expireTime;
-        state.subConfig[3].value = result.data.used;
-        state.subConfig[4].value = result.data.remaining;
+        // @ts-ignore
+        state.subConfig[3].value[0] = result.data.used;
+        // @ts-ignore
+        state.subConfig[3].value[1] = result.data.remaining;
         state.baseConfig[1].value = result.data.system;
         state.baseConfig[2].value = result.data.concurrent;
         state.baseConfig[3].value = result.data.bascEmailNotify;
         state.baseConfig[4].value = result.data.marketingEmailNotify;
         state.baseConfig[5].value = result.data.rateLimit === 0 ? "无限制" : result.data.rateLimit;
         state.advancedConfig[0].value = result.data.cloudRules;
-        if (result.data.reset !== 0) {
+        if (result.data.reset !== "0" && result.data.reset !== 0) {
           state.subConfig.push({
             title: "下次流量重置日期",
             value: result.data.reset,
@@ -188,12 +185,27 @@ const General = (props: Props) => {
               )
             ) : !loading ? (
               (state.subConfig[2].value as number) > getCurrentTimeStamp() ? (
-                item.title === "剩余流量" && !item.value ? (
+                item.title === "已使用/剩余流量" && (item.value as number[])[1] < 0 ? (
                   <div className="expired">
-                    {formatBytes(item.value as number)} 流量已用尽 <span className="renewal">重置流量</span>
+                    {formatBytes((item.value as number[])[0])}
+                    流量已用尽 <span className="renewal">重置流量</span>
                   </div>
                 ) : (
-                  <div>{formatBytes(item.value as number)}</div>
+                  <div>
+                    <div>
+                      <Progress
+                        showInfo={false}
+                        percent={
+                          ((item.value as number[])[0] / ((item.value as number[])[0] + (item.value as number[])[1])) *
+                          100
+                        }
+                        size="small"
+                      />
+                    </div>
+                    {formatBytes((item.value as number[])[0] as number)}
+                    <span> / </span>
+                    {formatBytes((item.value as number[])[1] as number)}
+                  </div>
                 )
               ) : (
                 <div className="expired">已过期</div>

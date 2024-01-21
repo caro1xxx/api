@@ -113,13 +113,9 @@ export const isValidEmail = (email: string) => {
 };
 
 export const formatBytes = (bytes: number) => {
-  const gigabyte = 1024 * 1024 * 1024;
-  const megabyte = 1024 * 1024;
-  if (bytes >= gigabyte) {
-    return (bytes / gigabyte).toFixed(2) + " GB";
-  } else if (bytes >= megabyte) {
-    return (bytes / megabyte).toFixed(2) + " MB";
+  if (bytes < 1024 * 1024 * 1024) {
+    return (bytes / (1024 * 1024)).toFixed(2) + "MB";
   } else {
-    return bytes + " Bytes";
+    return (bytes / (1024 * 1024 * 1024)).toFixed(2) + "GB";
   }
 };

@@ -20,3 +20,8 @@ export const orderDiscount = async (order: string, code: string) => {
   let result = await fecther(`discount`, { order, code }, "post");
   return Promise.resolve(result);
 };
+
+export const getPaymentStatus = async (order: string) => {
+  let result = await fecther(`paymentStatus`, { order: order }, "post");
+  return Promise.resolve(result);
+};

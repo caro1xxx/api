@@ -2,13 +2,14 @@ import styled from "styled-components";
 import { formatTimestamp, setStorage, isValidEmail } from "../utils/tools";
 import { Button, Input, Space, Divider, Checkbox, message, Modal } from "antd";
 import { useReactive, useRequest } from "ahooks";
-import { getOrder, paymentOrder, orderDiscount } from "../api/order";
+import { getOrder, paymentOrder, orderDiscount, getPaymentStatus } from "../api/order";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { UserOutlined, UnlockOutlined } from "@ant-design/icons";
 import { saveToken } from "../redux/modules/user";
 import Qr from "../components/mods/Qr";
+import { useNavigate } from "react-router-dom";
 
 const Wrap = styled.div`
   background-image: url("https://pic.imgdb.cn/item/65a62b90871b83018a1d96b9.png");
@@ -77,6 +78,7 @@ const Wrap = styled.div`
 type Props = {};
 
 const Order = (props: Props) => {
+  const navigate = useNavigate();
   const token = useAppSelector((state) => state.user.token) as string;
   const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
@@ -103,6 +105,17 @@ const Order = (props: Props) => {
     },
   });
 
+  const { run: checkPayStatus, cancel } = useRequest(getPaymentStatus, {
+    pollingInterval: 3000,
+    manual: true,
+    onSuccess: (result) => {
+      if (result.code === 200 && result.order === data.order.no) {
+        cancel();
+        navigate("/sub/general");
+      }
+    },
+  });
+
   const payment = async (order: string) => {
     if (state.loading) {
       messageApi.info("下单中");
@@ -126,8 +139,10 @@ const Order = (props: Props) => {
         } else if (state.method === "wxpay") {
           state.wechat.qr = result.order.qrcode;
           state.wechat.showWechatQr = true;
+          checkPayStatus(data.order.no);
         } else if (state.method === "alipay") {
-          window.open(result.order.payurl);
+          window.open(result.order.payurl, "_blank");
+          checkPayStatus(data.order.no);
         }
       } else {
         messageApi.info(result.message);
