@@ -47,3 +47,22 @@ class PayCallback(APIView):
       except Exception as e:
         print(str(e))
         return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
+
+  def post(self, request, *args, **kwargs):
+    ret = {'code': 200, 'message': '成功'}
+    try:
+      order = json.loads(request.body).get('order', None)
+      ordersFields = Orders.objects.filter(no=order).first()
+      if ordersFields is None:
+        ret['code'] = 404
+        ret['message'] = '订单不存在'
+        return JsonResponse(ret)
+      if ordersFields.status == False:
+        ret['code'] = 403
+        ret['message'] = '未支付'
+        return JsonResponse(ret)
+      ret['order'] = order
+      return JsonResponse(ret)
+    except Exception as e:
+      print(str(e))
+      return JsonResponse({'code': 500, 'message': "timeout"})
