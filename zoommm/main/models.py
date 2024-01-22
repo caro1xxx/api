@@ -9,8 +9,12 @@ class Plans(models.Model):
   icon = models.TextField()
   stock = models.IntegerField()
   flow = models.IntegerField()
-  type = models.BooleanField(default=False)
-  recommend = models.CharField(max_length=24,null=True)
+  giftStartTime = models.IntegerField(default=0)
+  giftEndTime = models.IntegerField(default=0)
+  giftAllowDiscount = models.BooleanField(default=False)
+  giftSumCount = models.IntegerField(default=0)
+  giftCurrentCount = models.IntegerField(default=0)
+  giftPrice = models.CharField(max_length=12,default='9999')
 
 
 class Member(models.Model):
