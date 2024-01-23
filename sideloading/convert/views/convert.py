@@ -19,7 +19,7 @@ class Convert(APIView):
       nodeUrl = ""
       nodeAll = Node.objects.all()
       for node in nodeAll:
-        nodeUrl = f"{nodeUrl}{node.protocol}://{quote(token)}@{node.domain}?sni={quote(node.sni)}&type={quote(node.type)}&path={quote('/'+node.path)}#{quote(node.tag)}|"
+        nodeUrl = f"{nodeUrl}{node.protocol}://{quote(token)}@{node.entry}?sni={quote(node.sni)}&type={quote(node.type)}&path={quote('/'+node.path)}#{quote(node.tag)}|"
       
       response = requests.get(f"http://127.0.0.1:25500/sub?target={'clash' if target is None else target}&tfo={True}&interval={60 * 60 * 24}&filename={'ZOOM'}&append_info={True}&remove_emoji={False}&url={quote(nodeUrl[:-1])}")
       if response.status_code == 200:
