@@ -21,7 +21,7 @@ class Convert(APIView):
       for node in nodeAll:
         nodeUrl = f"{nodeUrl}{node.protocol}://{quote(token)}@{node.entry}?sni={quote(node.sni)}&type={quote(node.type)}&path={quote('/'+node.path)}#{quote(node.tag)}|"
       
-      response = requests.get(f"http://127.0.0.1:25500/sub?target={'clash' if target is None else target}&tfo={True}&interval={60 * 60 * 24}&filename={'ZOOM'}&append_info={True}&remove_emoji={False}&url={quote(nodeUrl[:-1])}")
+      response = requests.get(f"http://127.0.0.1:25500/sub?target={'clash' if target is None else target}&tfo={True}&interval=43200&filename={'ZOOM'}&remove_emoji=false&url={quote(nodeUrl[:-1])}")
       if response.status_code == 200:
         return HttpResponse(response.text)
       return 'Zoommm 专业机场网络隐私安全'
