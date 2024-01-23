@@ -15,6 +15,7 @@ class Plans(models.Model):
   giftSumCount = models.IntegerField(default=0)
   giftCurrentCount = models.IntegerField(default=0)
   giftPrice = models.CharField(max_length=12,default='9999')
+  real = models.FloatField(verbose_name='真实倍率')
 
 
 class Member(models.Model):

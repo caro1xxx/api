@@ -46,7 +46,6 @@ class PayCallback(APIView):
         sortedParams = sorted((key, value) for key, value in orderParmas.items())
         signStr = "&".join(f"{key}={value}" for key, value in sortedParams)
         orderParmas["sign"] = toMD5(signStr+TINAXINGKEY)
-
         if orderParmas["sign"] != sign:
           ret['code'] = 422
           ret['message'] = "非法"

@@ -34,7 +34,7 @@ def asyncAddProperty(param,out_trade_no):
   if ordersFields.plan.time > 30:
     loopFlow = ordersFields.plan.flow / (ordersFields.plan.time / 30)
     memberFields.nextReset = getMonthOverResetDate()
-  createResult = postCreateNodeUser(ordersFields.user.email,plainText,loopFlow*1073741824)
+  createResult = postCreateNodeUser(ordersFields.user.email,plainText,int((loopFlow*1073741824)/ordersFields.plan.real))
   planFields = Plans.objects.filter(no=ordersFields.plan.no).first()
   if planFields is not None:
     planFields.stock = planFields.stock - 1

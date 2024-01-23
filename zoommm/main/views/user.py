@@ -63,12 +63,12 @@ class Register(APIView):
 
 class Profile(APIView):
     def get(self, request, *args, **kwargs):
-        ret = {'code': 200, 'message': '注册成功'}
+        ret = {'code': 200, 'message': '获取成功'}
         try:
             username = request.payload_data["username"]
             memberFields = Member.objects.filter(email=username).first()
             ret['data'] = {
-                "plan":memberFields.plan.title,
+                "plan": "未订阅",
                 "subLink":"",
                 "expireTime":memberFields.expireTime,
                 "used":-1,
@@ -81,12 +81,17 @@ class Profile(APIView):
                 "cloudRules":memberFields.cloudRules,
                 "reset":memberFields.nextReset
             }
+            if memberFields.plan is not None:
+                ret['data']['plan'] = memberFields.plan.title
             userFlow = getUserFlow(memberFields.email)
-            if userFlow != False:
+            if userFlow != False and '404' not in userFlow:
                 jsonUserFlow = json.loads(userFlow)
                 ret['data']["subLink"] = "link"
-                ret['data']['used'] = jsonUserFlow["download"]+jsonUserFlow["upload"]
-                ret['data']['remaining'] =jsonUserFlow["quota"] - (jsonUserFlow["download"]+jsonUserFlow["upload"])
+                ret['data']['used'] = (jsonUserFlow["download"] + jsonUserFlow["upload"]) * memberFields.plan.real
+                ret['data']['remaining'] = (jsonUserFlow["quota"] - (jsonUserFlow["download"]+jsonUserFlow["upload"])) * memberFields.plan.real
+                resposne = JsonResponse(ret)
+                resposne ['Cache-Control'] = "max-age=1800"
+                return resposne
             return JsonResponse(ret)
         except Exception as e:
             print(str(e))
@@ -104,12 +109,17 @@ class Advanced(APIView):
             if memberFields.expireTime < getCurrentTimestamp():
                 ret['code'] = 412
                 ret['message'] = "未订阅"
+                return JsonResponse(ret)
             dispatch = getSubDispatch(username)
             if dispatch == False:
                 ret['code'] = 432
                 ret['message'] = '系统错误,请刷新网页'
+                return JsonResponse(ret)
+            
             ret['data'] = {"convert":json.loads(dispatch)["convert"],}
-            return JsonResponse(ret)
+            resposne = JsonResponse(ret)
+            resposne ['Cache-Control'] = "max-age=1800"
+            return resposne
         except Exception as e:
             print(str(e))
             return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
@@ -240,6 +250,7 @@ class Discount(APIView):
 
 
 class Invite(APIView):
+    @method_decorator(cache_control(public=True, max_age=1800))
     def get(self, request, *args, **kwargs):
         ret = {'code': 200, 'message': '成功'}
         try:
