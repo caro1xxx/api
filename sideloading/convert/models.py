@@ -11,7 +11,7 @@ class User(models.Model):
   download = models.BigIntegerField(default=0)
   upload = models.BigIntegerField(default=0)
   class Meta:
-      db_table = 'users'
+    db_table = 'users'
 
 
 class Node(models.Model):
@@ -27,3 +27,5 @@ class Node(models.Model):
   sumTraffice = models.IntegerField()
   usedTraffice = models.FloatField(default=0.0)
   ban = models.BooleanField(default=False)
+  expireTime = models.IntegerField()
+  entry = models.CharField(max_length=32,null=True)
