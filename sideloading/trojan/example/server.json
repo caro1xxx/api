@@ -2,22 +2,46 @@
     "run_type": "server",
     "local_addr": "0.0.0.0",
     "local_port": 443,
-    "remote_addr": "127.0.0.1",
+    "remote_addr": "jp-tokyo.t7xqp3r.life",
     "remote_port": 80,
-    "password": [
-        "your_password"
-    ],
+    "password": [],
     "ssl": {
-        "cert": "your_cert.crt",
-        "key": "your_key.key",
-        "sni": "your-domain-name.com"
+        "cert": "/etc/letsencrypt/live/jp-tokyo.t7xqp3r.life/fullchain.pem",
+        "key": "/etc/letsencrypt/live/jp-tokyo.t7xqp3r.life/privkey.pem",
+        "fallback_addr": "127.0.0.1",
+        "fallback_port": 80,
+        "sni": "microsoft.com"
+    },
+    "api": {
+        "enabled": true,
+        "api_addr": "0.0.0.0",
+        "api_port": 30189
+    },
+    "mysql": {
+        "enabled": true,
+        "server_addr": "46.250.249.209",
+        "server_port": 3306,
+        "database": "data",
+        "username": "data",
+        "password": "9Db55nG4V4QtSo",
+        "check_rate": 60
+    },
+    "websocket": {
+        "enabled": true,
+        "path": "/A9H83J8yQDfRArvJKv5m5PEmLGfWoQ",
+        "host": "jp-tokyo..t7xqp3r.life"
+    },
+    "mux": {
+        "enabled": true,
+        "concurrency": 8,
+        "idle_timeout": 60
     },
     "router": {
         "enabled": true,
         "block": [
             "geoip:private"
         ],
-        "geoip": "/usr/share/trojan-go/geoip.dat",
-        "geosite": "/usr/share/trojan-go/geosite.dat"
+        "geoip": "/root/zoom/sideloading/trojan/geoip.dat",
+        "geosite": "/root/zoom/sideloading/trojan/geosite.dat"
     }
 }
