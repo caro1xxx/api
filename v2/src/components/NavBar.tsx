@@ -98,7 +98,7 @@ const NavBar = (props: Props) => {
   return (
     <Wrap>
       <div className="activte">
-        新春特惠提前開售 <span>全場通用 -20%</span> 折扣碼‘‘zoom66’’ <Link to={"/plan"}>前往</Link>
+        新春特惠提前開售 <span>全場通用 -15%</span> 折扣碼‘‘zoom66’’ <Link to={"/plan"}>前往</Link>
       </div>
       <div className="body center">
         <Link to={"/"} className="logo">
@@ -119,6 +119,7 @@ const NavBar = (props: Props) => {
             <Popover
               placement="topLeft"
               title={null}
+              trigger={["click"]}
               open={state.openContralBar}
               onOpenChange={() => (state.openContralBar = !state.openContralBar)}
               content={

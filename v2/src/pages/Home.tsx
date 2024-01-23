@@ -223,6 +223,7 @@ const Home = (props: Props) => {
           查看全部订阅
         </Link>
         <div style={{ marginTop: "100px", fontSize: "30px", textAlign: "center" }}>節點狀態</div>
+        <div style={{ fontSize: "10px", color: "#959595" }}>下列延時僅供參考 以實際客戶端為準</div>
         <Status>
           <div className="wrap">
             {!serverLoding &&
@@ -244,7 +245,7 @@ const Home = (props: Props) => {
                           fontWeight: "lighter",
                         }}
                       >
-                        {item.fields.delay}ms
+                        {item.fields.delay + "" === "100" ? "-" : item.fields.delay}ms
                       </div>
                     </div>
                     <div className="center" style={{ marginTop: "10px" }}>

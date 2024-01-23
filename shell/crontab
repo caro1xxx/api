@@ -1,0 +1,3 @@
+crontab -e
+*/10 * * * * python3 /root/TrafficStatistics.py
+*/30 * * * * python3 /root/checkGFW.py

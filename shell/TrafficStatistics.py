@@ -2,7 +2,7 @@ import requests
 import psutil  # 用于获取系统的网络流量信息
 
 backend = "https://side.voteinfo.life/api/v1/side/traffic"
-localDomain = "zoom-jp-osaka.t7xqp3r.life"
+localDomain = "hk-western.t7xqp3r.life"
 
 # 获取已使用的流量（以GB为单位）
 def get_used_traffic():

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { formatTimestamp, setStorage, isValidEmail, ping } from "../utils/tools";
+import { formatTimestamp, setStorage, isValidEmail } from "../utils/tools";
 import { Button, Input, Space, Divider, Checkbox, message, Modal, Spin } from "antd";
 import { useReactive, useRequest } from "ahooks";
 import { getOrder, paymentOrder, orderDiscount, getPaymentStatus } from "../api/order";
@@ -10,7 +10,6 @@ import { UserOutlined, UnlockOutlined } from "@ant-design/icons";
 import { saveToken } from "../redux/modules/user";
 import Qr from "../components/mods/Qr";
 import { useNavigate } from "react-router-dom";
-import FixIpv6 from "../components/mods/FixIpv6";
 
 const Wrap = styled.div`
   margin-top: 110px;
@@ -79,7 +78,6 @@ const Order = (props: Props) => {
       showWechatQr: false,
       qr: "",
     },
-    supportIpv6: "loading",
   });
   const { data, loading, run } = useRequest(getOrder, {
     manual: true,
@@ -90,22 +88,13 @@ const Order = (props: Props) => {
     },
   });
 
-  useRequest(ping, {
-    cacheKey: "supportIpv6",
-    onSuccess: (result) => {
-      console.log(result);
-      // @ts-ignore
-      state.supportIpv6 = result;
-    },
-  });
-
   const { run: checkPayStatus, cancel } = useRequest(getPaymentStatus, {
     pollingInterval: 3000,
     manual: true,
     onSuccess: (result) => {
       if (result.code === 200 && result.order === data.order.no) {
         cancel();
-        navigate("/sub/general");
+        navigate("/");
       }
     },
   });
@@ -163,28 +152,28 @@ const Order = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search.search]);
 
-  useEffect(() => {
-    if (state.supportIpv6 !== "loading" && !loading) {
-      if (window.stop !== undefined) {
-        window.stop();
-      } else if (document.execCommand !== undefined) {
-        document.execCommand("Stop", false);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.supportIpv6]);
+  // useEffect(() => {
+  //   if (state.supportIpv6 !== "loading" && !loading) {
+  //     if (window.stop !== undefined) {
+  //       window.stop();
+  //     } else if (document.execCommand !== undefined) {
+  //       document.execCommand("Stop", false);
+  //     }
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [state.supportIpv6]);
 
   return (
     <Wrap>
       {contextHolder}
-      {!loading && state.supportIpv6 !== "loading" ? (
+      {!loading ? (
         data && data.code === 200 ? (
           <div className="body">
             <Divider className="title">订单</Divider>
             <div className="googs center">
               <div className="goostitle">
                 <div style={{ fontSize: "17px", fontWeight: "bolder" }}>{data.order.title}计划 x1</div>
-                <div>Zoom 特惠套餐</div>
+                <div style={{ fontFamily: "Bungler", letterSpacing: "2px" }}>Zoom 特惠套餐</div>
               </div>
               <div style={{ fontWeight: "bolder" }}>￥{data.order.price}</div>
             </div>
@@ -353,18 +342,6 @@ const Order = (props: Props) => {
         width={"auto"}
         destroyOnClose={true}
         modalRender={(modal) => <Qr sub={state.wechat.qr} />}
-      />
-      <Modal
-        open={state.supportIpv6 !== "local" && state.supportIpv6 !== "loading"}
-        title={<></>}
-        onCancel={() => {}}
-        closeIcon={null}
-        maskClosable={false}
-        footer={[]}
-        centered
-        width={"auto"}
-        destroyOnClose={true}
-        modalRender={(modal) => <FixIpv6 />}
       />
     </Wrap>
   );

@@ -104,7 +104,7 @@ const Status = (props: Props) => {
                       fontWeight: "lighter",
                     }}
                   >
-                    {item.fields.delay}ms
+                    {item.fields.delay + "" === "100" ? "-" : item.fields.delay}ms
                   </div>
                 </div>
                 <div className="center" style={{ marginTop: "10px" }}>

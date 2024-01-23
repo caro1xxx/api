@@ -2,7 +2,7 @@ import subprocess
 import requests
 
 backend = "https://side.voteinfo.life/api/v1/side/gfwBan"
-localDomain = "zoom-jp-osaka.t7xqp3r.life"
+localDomain = "hk-western.t7xqp3r.life"
 
 
 # 向后端发送GET请求

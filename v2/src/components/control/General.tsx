@@ -1,10 +1,12 @@
 import { useReactive, useRequest } from "ahooks";
 import styled from "styled-components";
-import { Switch, Input, Divider, Spin, Progress } from "antd";
+import { Switch, Input, Divider, Spin, Progress, message, Modal } from "antd";
 import { formatTimestamp, formatBytes, getCurrentTimeStamp } from "../../utils/tools";
 import { Link } from "react-router-dom";
-import { Profile } from "../../api/user";
-import { useRef } from "react";
+import { AdvancedNode, Profile } from "../../api/user";
+import { useEffect, useRef } from "react";
+import ClipboardJS from "clipboard";
+import Qr from "../mods/Qr";
 
 const Wrap = styled.div`
   height: calc(100vh);
@@ -51,7 +53,10 @@ type Props = {
 
 const General = (props: Props) => {
   const scrollContainerRef = useRef(null);
+  const [messageApi, contextHolder] = message.useMessage();
   const state = useReactive({
+    subscription: "",
+    showQr: false,
     subConfig: [
       {
         title: "订阅",
@@ -118,36 +123,72 @@ const General = (props: Props) => {
         title: "手动导入",
         value: "https://github.com/cfwtf/clash_for_windows/releases",
         type: "copy",
+        clikc: () => {},
       },
       {
         title: "扫码导入",
         value: "https://github.com/cfwtf/clash_for_windows/releases",
         type: "qr",
+        clikc: () => {
+          state.showQr = true;
+        },
       },
       {
         title: "Clash(window)",
         value: "https://github.com/cfwtf/clash_for_windows/releases",
         type: "app",
+        clikc: () => {
+          window.open(
+            `clash://install-config?url=${encodeURIComponent(state.subscription)}&target=clash&name=ZOOM`,
+            "_blank"
+          );
+        },
       },
       {
         title: "V2rayU(Mac)",
         value: "https://github.com/yanue/V2rayU/releases",
         type: "app",
+        clikc: () => {
+          console.log(state.subscription);
+        },
+      },
+      {
+        title: "ClashX Pro(Mac)",
+        value: "https://github.com/eujc/rj/releases/tag/ClashX",
+        type: "app",
+        clikc: () => {
+          window.open(
+            `clash://install-config?url=${encodeURIComponent(state.subscription)}&target=clash&name=ZOOM`,
+            "_blank"
+          );
+        },
       },
       {
         title: "Clash(Android)",
         value: "https://dl.clashforandroid.org/releases/latest/cfa-2.5.12-premium-universal-release.apk",
         type: "app",
+        clikc: () => {
+          window.open(
+            `clash://install-config?url=${encodeURIComponent(state.subscription)}&target=clash&name=ZOOM`,
+            "_blank"
+          );
+        },
       },
       {
         title: "Shadowrocket(IOS)",
         value: "https://apps.apple.com/us/app/shadowrocket/id932747118",
         type: "app",
+        clikc: () => {
+          window.open(`shadowrocket://add/${state.subscription}&target=clash&remark=ZOOM`, "_blank");
+        },
       },
       {
         title: "Surge(Mac)",
         value: "https://apps.apple.com/us/app/surge-5/id1442620678",
         type: "app",
+        clikc: () => {
+          console.log(state.subscription);
+        },
       },
     ],
   });
@@ -180,14 +221,36 @@ const General = (props: Props) => {
     },
   });
 
+  const { loading: linkLoading } = useRequest(AdvancedNode, {
+    cacheKey: "AdvancedNode",
+    onSuccess: (result) => {
+      if (result.code === 200) {
+        state.subscription = result.data.convert;
+      }
+    },
+  });
+
   const scrollToBottom = () => {
     // @ts-ignore
     scrollContainerRef.current!.scrollIntoView({
       behavior: "smooth",
     });
   };
+
+  useEffect(() => {
+    const clipboard = new ClipboardJS("#linkbutton");
+    clipboard.on("success", (e) => {
+      messageApi.success("复制订阅链接成功");
+      e.clearSelection();
+    });
+    return () => {
+      clipboard.destroy();
+    };
+  }, [messageApi]);
+
   return (
     <Wrap>
+      {contextHolder}
       <Divider className="bar" orientation="left" orientationMargin={10}>
         <div className="center">
           <svg
@@ -237,7 +300,7 @@ const General = (props: Props) => {
                   </div>
                 ) : (
                   <div className="expired">
-                    已到期{" "}
+                    {" "}
                     <Link to={"/plan"} className="renewal">
                       去订阅
                     </Link>
@@ -358,7 +421,7 @@ const General = (props: Props) => {
         );
       })}
       <Divider orientation="left" orientationMargin={10}>
-        订阅链接<span style={{ fontSize: "10px" }}>(请注意ZOOM 仅支持双栈代理软件)</span>
+        订阅链接
       </Divider>
       {state.sublink.map((item) => {
         return (
@@ -366,22 +429,56 @@ const General = (props: Props) => {
             <div>{item.title}</div>
             <div style={{ flex: 1 }}></div>
             {item.type === "app" ? (
-              <>
-                <div style={{ color: "green", marginRight: "10px" }}>导入订阅</div>
-                <Link to={item.value} target="_blank">
-                  下载软件
-                </Link>
-              </>
+              linkLoading ? (
+                <Spin />
+              ) : (
+                <>
+                  <div style={{ color: "green", marginRight: "10px" }} onClick={item.clikc}>
+                    导入订阅
+                  </div>
+                  <Link to={item.value} target="_blank">
+                    下载软件
+                  </Link>
+                </>
+              )
             ) : item.type === "copy" ? (
-              <div style={{ color: "green" }}>复制</div>
+              linkLoading ? (
+                <Spin />
+              ) : (
+                <div
+                  id="linkbutton"
+                  data-clipboard-text={`${state.subscription}&target=clash`}
+                  style={{ color: "green" }}
+                >
+                  复制
+                </div>
+              )
+            ) : linkLoading ? (
+              <Spin />
             ) : (
-              <div style={{ color: "green" }}>扫码</div>
+              <div onClick={item.clikc} style={{ color: "green" }}>
+                扫码
+              </div>
             )}
           </div>
         );
       })}
       <div ref={scrollContainerRef}></div>
       <div style={{ fontSize: "10px", textAlign: "center", marginTop: "20px" }}>ZOOM Panel version 0.1.14</div>
+      <Modal
+        open={state.showQr}
+        title={<></>}
+        onCancel={() => {
+          state.showQr = false;
+        }}
+        closeIcon={null}
+        maskClosable={true}
+        footer={[]}
+        centered
+        width={"auto"}
+        destroyOnClose={true}
+        modalRender={(modal) => <Qr sub={state.subscription + "&target=clash"} />}
+      />
     </Wrap>
   );
 };
