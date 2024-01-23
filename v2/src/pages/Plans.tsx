@@ -6,12 +6,9 @@ import PlanItem from "../components/PlanItem";
 import Bottom from "../components/Bottom";
 
 const Wrap = styled.div`
-  background-image: url("https://pic.imgdb.cn/item/65a63bd2871b83018a518bfe.png");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  height: calc(100vh);
-  overflow-y: scroll;
+  margin-top: 140px;
+  background-color: #fff;
+  min-height: calc(100vh);
   .plansWrap {
     width: 1200px;
     margin: 50px auto;

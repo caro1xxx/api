@@ -1,7 +1,7 @@
 import requests
 import psutil  # 用于获取系统的网络流量信息
 
-backend = "http://154.204.26.79:8001/api/v1/zoommm/traffic"
+backend = "https://side.voteinfo.life/api/v1/side/traffic"
 localDomain = "zoom-jp-osaka.t7xqp3r.life"
 
 # 获取已使用的流量（以GB为单位）
@@ -14,7 +14,7 @@ def get_used_traffic():
 def send_get_request(used_traffic_gb):
   backend_url = backend
   params = {"usedTraffic": used_traffic_gb,"localDomain":localDomain}
-  
+
   try:
     response = requests.get(backend_url, params=params)
   except Exception as e:

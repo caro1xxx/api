@@ -2,12 +2,12 @@ import styled from "styled-components";
 
 const Wrap = styled.div`
   color: black;
-  height: 600px;
+  height: calc(100vh);
   padding: 10px 20px;
   overflow-y: scroll;
   user-select: none;
   .hint {
-    height: 550px;
+    height: calc(100vh);
     font-size: 20px;
     color: #848484;
     > svg {

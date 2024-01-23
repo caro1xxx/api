@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { formatTimestamp, setStorage, isValidEmail } from "../utils/tools";
-import { Button, Input, Space, Divider, Checkbox, message, Modal } from "antd";
+import { formatTimestamp, setStorage, isValidEmail, ping } from "../utils/tools";
+import { Button, Input, Space, Divider, Checkbox, message, Modal, Spin } from "antd";
 import { useReactive, useRequest } from "ahooks";
 import { getOrder, paymentOrder, orderDiscount, getPaymentStatus } from "../api/order";
 import { useEffect } from "react";
@@ -10,55 +10,39 @@ import { UserOutlined, UnlockOutlined } from "@ant-design/icons";
 import { saveToken } from "../redux/modules/user";
 import Qr from "../components/mods/Qr";
 import { useNavigate } from "react-router-dom";
+import FixIpv6 from "../components/mods/FixIpv6";
 
 const Wrap = styled.div`
-  background-image: url("https://pic.imgdb.cn/item/65a62b90871b83018a1d96b9.png");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  min-height: calc(100vh);
+  margin-top: 110px;
+  background-color: #fff;
+  min-height: calc(100vh - 110px);
   width: calc(100vw);
   display: flex;
   align-items: center;
   justify-content: center;
   .body {
+    background-color: #f7f5f7;
+    border-radius: 10px;
     padding-top: 120px;
     user-select: none;
-    background: linear-gradient(to bottom, #047670, #047670, #047670, #afff8f);
     width: 380px;
     min-height: 570px;
     margin: 0px auto;
-    border-radius: 5px;
-    color: white;
+    color: #2c2c2c;
     padding: 20px;
     padding-top: 0px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     .authinpout {
       margin-bottom: 10px;
     }
     .title {
       font-size: 20px;
       font-weight: bolder;
-      color: white;
+      color: #2c2c2c;
     }
     .googs {
       margin: 20px 0px;
-      .iconWrap {
-        background-color: #4b786f;
-        height: 40px;
-        width: 40px;
-        border-radius: 5px;
-        > div {
-          background-image: url("https://pic.imgdb.cn/item/65a2c663871b83018a034c48.png");
-          height: 25px;
-          width: 25px;
-          background-size: 100%;
-          background-repeat: no-repeat;
-        }
-      }
       .goostitle {
         flex: 1;
-        margin-left: 10px;
         font-size: 10px;
       }
     }
@@ -95,6 +79,7 @@ const Order = (props: Props) => {
       showWechatQr: false,
       qr: "",
     },
+    supportIpv6: "loading",
   });
   const { data, loading, run } = useRequest(getOrder, {
     manual: true,
@@ -102,6 +87,15 @@ const Order = (props: Props) => {
     onSuccess: (result) => {
       state.actuallyPaid = result.order.actuallyPaid;
       state.discountCode = result.order.discount;
+    },
+  });
+
+  useRequest(ping, {
+    cacheKey: "supportIpv6",
+    onSuccess: (result) => {
+      console.log(result);
+      // @ts-ignore
+      state.supportIpv6 = result;
     },
   });
 
@@ -169,17 +163,25 @@ const Order = (props: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search.search]);
 
+  useEffect(() => {
+    if (state.supportIpv6 !== "loading" && !loading) {
+      if (window.stop !== undefined) {
+        window.stop();
+      } else if (document.execCommand !== undefined) {
+        document.execCommand("Stop", false);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.supportIpv6]);
+
   return (
     <Wrap>
       {contextHolder}
-      {!loading ? (
+      {!loading && state.supportIpv6 !== "loading" ? (
         data && data.code === 200 ? (
           <div className="body">
             <Divider className="title">订单</Divider>
             <div className="googs center">
-              <div className="iconWrap center">
-                <div></div>
-              </div>
               <div className="goostitle">
                 <div style={{ fontSize: "17px", fontWeight: "bolder" }}>{data.order.title}计划 x1</div>
                 <div>Zoom 特惠套餐</div>
@@ -286,17 +288,17 @@ const Order = (props: Props) => {
                     >
                       <path
                         d="M512 958.016611c-245.919634 0-446.016611-200.064292-446.016611-446.016611 0-245.919634 200.095256-446.016611 446.016611-446.016611 245.952318 0 446.016611 200.064292 446.016611 446.016611S757.952318 958.016611 512 958.016611zM512 129.983389c-210.655557 0-382.016611 171.359333-382.016611 382.016611 0 210.624593 171.359333 382.016611 382.016611 382.016611 210.624593 0 382.016611-171.359333 382.016611-382.016611S722.624593 129.983389 512 129.983389z"
-                        fill="#ffffff"
+                        fill="#2c2c2c"
                         p-id="2333"
                       ></path>
                       <path
                         d="M463.99957 304.00043c0 26.509985 21.490445 48.00043 48.00043 48.00043s48.00043-21.490445 48.00043-48.00043-21.490445-48.00043-48.00043-48.00043S463.99957 277.490445 463.99957 304.00043z"
-                        fill="#ffffff"
+                        fill="#2c2c2c"
                         p-id="2334"
                       ></path>
                       <path
                         d="M512 768c-17.664722 0-32.00086-14.303454-32.00086-32.00086L479.99914 448c0-17.664722 14.336138-32.00086 32.00086-32.00086s32.00086 14.336138 32.00086 32.00086l0 287.99914C544.00086 753.696546 529.664722 768 512 768z"
-                        fill="#ffffff"
+                        fill="#2c2c2c"
                         p-id="2335"
                       ></path>
                     </svg>
@@ -331,10 +333,12 @@ const Order = (props: Props) => {
             </Button>
           </div>
         ) : (
-          <div className="body">错误</div>
+          <div className="body">网络移除</div>
         )
       ) : (
-        <div className="body"></div>
+        <div className="body center">
+          <Spin />
+        </div>
       )}
       <Modal
         open={state.wechat.showWechatQr}
@@ -349,6 +353,18 @@ const Order = (props: Props) => {
         width={"auto"}
         destroyOnClose={true}
         modalRender={(modal) => <Qr sub={state.wechat.qr} />}
+      />
+      <Modal
+        open={state.supportIpv6 !== "local" && state.supportIpv6 !== "loading"}
+        title={<></>}
+        onCancel={() => {}}
+        closeIcon={null}
+        maskClosable={false}
+        footer={[]}
+        centered
+        width={"auto"}
+        destroyOnClose={true}
+        modalRender={(modal) => <FixIpv6 />}
       />
     </Wrap>
   );

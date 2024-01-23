@@ -5,10 +5,6 @@ import Plans from "./pages/Plans";
 import Order from "./pages/Order";
 import Sub from "./pages/Sub";
 import Status from "./pages/Status";
-import General from "./components/control/General";
-import Rules from "./components/control/Rules";
-import Links from "./components/control/Links";
-import Share from "./components/control/Share";
 import Settings from "./components/control/Settings";
 function App() {
   return (
@@ -21,10 +17,6 @@ function App() {
           <Route path="/order" Component={Order} />
           <Route path="/status" Component={Status} />
           <Route path="/sub" element={<Sub />}>
-            <Route path="general" Component={General} />
-            <Route path="rules" Component={Rules} />
-            <Route path="link" Component={Links} />
-            <Route path="share" Component={Share} />
             <Route path="settings" Component={Settings} />
           </Route>
         </Routes>

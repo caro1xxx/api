@@ -1,7 +1,7 @@
 import subprocess
 import requests
 
-backend = "http://154.204.26.79:8001/api/v1/zoommm/gfwBan"
+backend = "https://side.voteinfo.life/api/v1/side/gfwBan"
 localDomain = "zoom-jp-osaka.t7xqp3r.life"
 
 

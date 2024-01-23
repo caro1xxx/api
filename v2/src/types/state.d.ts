@@ -8,7 +8,12 @@ export interface TypesPlanItem {
     icon: string;
     stock: number;
     flow: number;
-    recommend: string;
+    giftStartTime: number;
+    giftEndTime: number;
+    giftAllowDiscount: boolean;
+    giftSumCount: number;
+    giftCurrentCount: number;
+    giftPrice: string;
   };
 }
 

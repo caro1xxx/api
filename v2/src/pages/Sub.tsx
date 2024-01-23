@@ -17,6 +17,10 @@ const Wrap = styled.div`
     height: 600px;
     border-radius: 10px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    @media screen and (max-width: 700px) {
+      border-radius: 0px;
+      height: calc(100vh);
+    }
     .bar {
       background-color: #c0c0c068;
       width: 200px;
@@ -24,6 +28,9 @@ const Wrap = styled.div`
       display: flex;
       flex-flow: column;
       border-radius: 10px 0px 0px 10px;
+      @media screen and (max-width: 700px) {
+        display: none;
+      }
       .item {
         display: block;
         text-decoration: none;
@@ -53,6 +60,7 @@ type Props = {};
 
 const Sub = (props: Props) => {
   const location = useLocation();
+
   return (
     <Wrap className="center">
       <div className="body center">

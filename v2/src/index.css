@@ -1,16 +1,51 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #478a67;
+@font-face {
+  font-family: 'HelveticaNeue';
+  src: url('./assets/fonts/HelveticaNeueBold.woff2') format('woff2'),
+      url('./assets/fonts/HelveticaNeueBold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@font-face {
+  font-family: 'Consolas';
+  src: url('./assets/fonts/Consolas.woff2') format('woff2'),
+      url('./assets/fonts/Consolas.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+@font-face {
+  font-family: 'Bungler';
+  src: url('./assets/fonts/BunglerLight-Regular.woff2') format('woff2'),
+      url('./assets/fonts/BunglerLight-Regular.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Joyfont-ZeusGB-Flash';
+  src: url('./assets/fonts/Joyfont-ZeusGB-Flash-Diamond.woff2') format('woff2'),
+      url('./assets/fonts/Joyfont-ZeusGB-Flash-Diamond.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+
+
+body {
+  margin: 0;
+  font-family: 'HelveticaNeue';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #fff;
+  font-size: 15px;
 }
 
 

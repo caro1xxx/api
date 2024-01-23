@@ -12,9 +12,16 @@ const Wrap = styled.div`
   padding: 20px;
   overflow-y: scroll;
   user-select: none;
+  @media screen and (max-width: 700px) {
+    height: calc(100vh);
+    padding-top: 80px;
+  }
   .itemWrap {
     display: flex;
     align-items: center;
+    @media screen and (max-width: 700px) {
+      flex-wrap: wrap;
+    }
   }
   .item {
     margin-right: 10px;
@@ -25,6 +32,9 @@ const Wrap = styled.div`
     font-size: 20px;
     font-weight: bolder;
     transition: background 0.7s ease;
+    @media screen and (max-width: 700px) {
+      margin-bottom: 10px;
+    }
     .img {
       margin-right: 10px;
       background-size: cover;

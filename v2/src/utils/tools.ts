@@ -119,3 +119,70 @@ export const formatBytes = (bytes: number) => {
     return (bytes / (1024 * 1024 * 1024)).toFixed(2) + "GB";
   }
 };
+
+export const secondsTotimer = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  const formattedHours = hours.toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+  const formattedSeconds = remainingSeconds.toString().padStart(2, "0");
+  return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+};
+
+export const isIPv6Enabled = () => {
+  const timeoutPromise = new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new Error("Request timed out"));
+    }, 1500);
+  });
+  const fetchPromise = fetch("https://v6.ip.zxinc.org/getip")
+    .then((res) => res.text())
+    .then((ipv6) => ipv6);
+  return Promise.race([fetchPromise, timeoutPromise]);
+};
+
+// export const ipTolocation = () => {
+//   return fetch("https://api.bigdatacloud.net/data/client-ip")
+//     .then((res) => res.text())
+//     .then((value) => {
+//       console.log(value);
+//       return value;
+//     });
+// };
+
+export const ping = () => {
+  return new Promise((resolve, reject) => {
+    var img = new Image();
+    var start = new Date().getTime();
+    var hasFinish = false;
+    img.onload = function () {
+      if (!hasFinish) {
+        hasFinish = true;
+        resolve("proxy");
+      }
+    };
+    img.onerror = function () {
+      hasFinish = false;
+      isIPv6Enabled()
+        .then((ipv6) => {
+          resolve("local");
+        })
+        .catch((err) => {
+          resolve("denyIpv6");
+        });
+    };
+    img.src = "https://developers.facebook.com/favicon.ico/?" + start;
+    setTimeout(() => {
+      if (!hasFinish) {
+        isIPv6Enabled()
+          .then((ipv6) => {
+            resolve("local");
+          })
+          .catch((err) => {
+            resolve("denyIpv6");
+          });
+      }
+    }, 1500);
+  });
+};

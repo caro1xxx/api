@@ -12,7 +12,7 @@ const Wrap = styled.div`
   height: calc(90vh);
   display: flex;
   .desc {
-    background-image: url("https://pic.imgdb.cn/item/65a6aed9871b83018a17f85a.png");
+    background-image: url("https://pic.imgdb.cn/item/65ae74a4871b83018af3fd46.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -49,11 +49,13 @@ const Wrap = styled.div`
       width: 300px;
       margin: 0 auto;
       .logo {
-        background-image: url("https://pic.imgdb.cn/item/65a62235871b83018afa72a8.png");
+        user-select: none;
+        cursor: pointer;
+        margin-left: 10px;
         height: 40px;
-        width: 140px;
-        background-repeat: no-repeat;
-        background-size: 100%;
+        color: black;
+        font-size: 40px;
+        font-family: "Bungler";
       }
     }
   }
@@ -74,13 +76,11 @@ const Register = (props: Props) => {
       {contextHolder}
       <div className="form center">
         <div className="forminput">
-          <div>
-            <div className="logo"></div>
-          </div>
+          <div className="logo">ZOOM Magic Internet</div>
           <div
             style={{ color: "#161616", fontSize: "15px", marginTop: "10px", marginLeft: "10px", fontWeight: "bolder" }}
           >
-            助您到达全球任意角落 网络有价 自由无价
+            助您到達全球任意角落 網絡有價 自由無價
           </div>
           <Form
             name="register"

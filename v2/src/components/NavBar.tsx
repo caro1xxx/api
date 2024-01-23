@@ -9,53 +9,63 @@ import { useEffect } from "react";
 import { getStorage } from "../utils/tools";
 import { saveToken } from "../redux/modules/user";
 import ControlBar from "./ControlBar";
+import General from "./control/General";
+import Rules from "./control/Rules";
+import Share from "./control/Share";
 
 const Wrap = styled.div`
-  background-color: rgba(0, 136, 66, 0.1);
+  user-select: none;
   position: fixed;
+  top: 0;
   z-index: 3;
-  width: 100%;
-  height: 70px;
+  width: calc(100vw);
+  height: 110px;
+  line-height: 70px;
+  font-weight: bolder;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  color: white;
+  .activte {
+    line-height: 40px;
+    text-align: center;
+    height: 40px;
+    background-color: black;
+    color: white;
+    @media screen and (max-width: 415px) {
+      > span {
+        display: none;
+      }
+    }
+    > a {
+      color: #ffcc00;
+      font-weight: bolder;
+      text-decoration: underline;
+      font-style: italic;
+      cursor: pointer;
+    }
+  }
   .body {
     width: 1200px;
-    height: 100%;
     margin: 0 auto;
-    display: flex;
-    align-items: center;
     @media screen and (max-width: 1220px) {
       width: calc(100vw);
       padding: 0px 10px;
     }
     .logo {
-      font-size: 30px;
-      font-weight: bolder;
-      background-image: url("https://pic.imgdb.cn/item/65a62235871b83018afa72a8.png");
-      height: 40px;
-      width: 140px;
-      background-repeat: no-repeat;
-      background-size: 100%;
+      font-family: "Bungler";
+      font-size: 40px;
+      text-decoration: none;
+      color: #2c2c2c;
     }
     .barItem {
       text-decoration: none;
-      color: white;
-      margin: 0px 10px;
-      font-size: 17px;
+      margin: 0px 5px;
       font-weight: bolder;
-    }
-    @media screen and (max-width: 500px) {
-      .barItem {
+      @media screen and (max-width: 500px) {
         display: none;
       }
-    }
-    .user {
-      display: flex;
-      align-items: center;
-      margin-left: 20px;
       > button {
-        margin-left: 10px;
+        font-weight: bolder;
+        font-size: 15px;
       }
     }
   }
@@ -70,6 +80,9 @@ const NavBar = (props: Props) => {
     showLogin: false,
     showRegister: false,
     authHeight: 90,
+    showContral: false,
+    contral: "",
+    openContralBar: false,
   });
 
   useEffect(() => {
@@ -79,27 +92,46 @@ const NavBar = (props: Props) => {
     if (window.innerWidth <= 530) {
       state.authHeight = 70;
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return (
     <Wrap>
-      <div className="body">
-        <Link className="logo" to={"/"}></Link>
+      <div className="activte">
+        新春特惠提前開售 <span>全場通用 -20%</span> 折扣碼‘‘zoom66’’ <Link to={"/plan"}>前往</Link>
+      </div>
+      <div className="body center">
+        <Link to={"/"} className="logo">
+          ZOOM
+        </Link>
         <div style={{ flex: 1 }}></div>
         <Link to={"/"} className="barItem">
-          主页
+          <Button type="text">首页</Button>
         </Link>
         <Link to={"/plan"} className="barItem">
-          订阅
+          <Button type="text">订阅</Button>
         </Link>
-        <Link to={"/about"} className="barItem">
-          关于
+        <Link to={"/status"} className="barItem">
+          <Button type="text">状态</Button>
         </Link>
         {token ? (
           <div className="user">
-            <Popover placement="topLeft" title={null} content={<ControlBar />}>
-              <Button style={{ color: "white", fontWeight: "bolder" }} type="text">
+            <Popover
+              placement="topLeft"
+              title={null}
+              open={state.openContralBar}
+              onOpenChange={() => (state.openContralBar = !state.openContralBar)}
+              content={
+                <ControlBar
+                  selectContral={(bar: string) => {
+                    state.contral = bar;
+                    state.showContral = true;
+                    state.openContralBar = false;
+                  }}
+                />
+              }
+            >
+              <Button style={{ fontWeight: "bolder", marginRight: "10px" }} type="text">
                 控制台
               </Button>
             </Popover>
@@ -117,7 +149,7 @@ const NavBar = (props: Props) => {
           </div>
         ) : (
           <div className="user">
-            <Button type="primary" onClick={() => (state.showLogin = true)}>
+            <Button type="primary" onClick={() => (state.showLogin = true)} style={{ marginRight: "10px" }}>
               登录
             </Button>
             <Button onClick={() => (state.showRegister = true)}>注册</Button>
@@ -168,6 +200,27 @@ const NavBar = (props: Props) => {
               state.showLogin = false;
             }}
           />
+        </Drawer>
+        <Drawer
+          title={null}
+          placement={"right"}
+          onClose={() => (state.showContral = false)}
+          open={state.showContral}
+          height={"90%"}
+          footer={null}
+          closeIcon={false}
+        >
+          {state.contral === "sub" ? (
+            <General
+              close={() => {
+                state.showContral = false;
+              }}
+            />
+          ) : state.contral === "ruls" ? (
+            <Rules />
+          ) : state.contral === "share" ? (
+            <Share />
+          ) : null}
         </Drawer>
       </ConfigProvider>
     </Wrap>
