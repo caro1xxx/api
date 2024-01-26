@@ -7,6 +7,12 @@ import hashlib
 from datetime import datetime,timedelta
 import requests
 
+
+def timestampDatetimeString(timestamp):
+    dt_object = datetime.fromtimestamp(timestamp)
+    formatted_string = dt_object.strftime('%Y-%m-%dT%H:%M:%S')
+    return formatted_string
+
 def getMonthOverResetDate():
     current_time = datetime.now()
     future_time = current_time + timedelta(days=30)
@@ -74,20 +80,6 @@ def getClientIp(request):
         ip = request.META.get('REMOTE_ADDR')
     return ip
 
-def getUserFlow(username):
-    response = requests.get(f"{settings.SIDEBACKENDURL}flowproperty?username={username}")
-    if response.status_code == 200:
-        return response.text
-    else:
-        return False
-
-
-def getSubDispatch(username):
-    response = requests.get(f"{settings.SIDEBACKENDURL}dispatch?username={username}")
-    if response.status_code == 200:
-        return response.text
-    else:
-        return False
 
 
 def getDelay(nodeTag):
@@ -98,17 +90,80 @@ def getDelay(nodeTag):
         return False
 
 
-def postCreateNodeUser(username,plainText,quota):
-    response = requests.get(f"{settings.SIDEBACKENDURL}create?username={username}&plainText={plainText}&quota={quota}")
+def clearExpiredUseToSide(username):
+    response = requests.get(f"{settings.SIDEBACKENDURL}expired?username={username}&auth={settings.SIDERKEY}")
     if response.status_code == 200:
         return response.text
     else:
         return False
 
 
-def clearExpiredUseToSide(username):
-    response = requests.get(f"{settings.SIDEBACKENDURL}expired?username={username}&auth={settings.SIDERKEY}")
+# Marzban
+def createMarzbanUser(username):
+    data = {
+        "username": username,
+        "proxies": {
+            "shadowsocks":{}
+        },
+        "inbounds": {
+            "shadowsocks":[]
+        },
+        "expire": getCurrentTimestamp(),
+        "data_limit": 0,
+        "data_limit_reset_strategy": "no_reset",
+        "status": "active",
+        "note": "",
+        "on_hold_timeout":0,
+        "on_hold_expire_duration": 0
+    }
+    headers = {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': settings.MARZAN_AUTHORIZATION
+    }
+    response = requests.post(f"{settings.MARZAN_URL}/api/user", headers=headers, json=data)
     if response.status_code == 200:
-        return response.text
+        return response.json()
+    else:
+        return False
+
+
+def changeMarzbanUserData(username,flow,expire,reset,planTitle):
+    data = {
+        "proxies": {
+            "shadowsocks":{}
+        },
+        "inbounds": {
+            "shadowsocks":["Shadowsocks TCP"]
+        },
+        "expire": expire,
+        "data_limit": flow,
+        "data_limit_reset_strategy": reset,
+        "status": "active",
+        "note": planTitle,
+        "on_hold_timeout":0,
+        "on_hold_expire_duration": 0
+    }
+    headers = {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': settings.MARZAN_AUTHORIZATION
+    }
+    response = requests.put(f"{settings.MARZAN_URL}/api/user/{username}", headers=headers, json=data)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return False
+
+
+def getMarzbanUserProfile(username):
+    headers = {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': settings.MARZAN_AUTHORIZATION
+    }
+    response = requests.get(f"{settings.MARZAN_URL}/api/user/{username}", headers=headers)
+    if response.status_code == 200:
+        return response.json()
     else:
         return False

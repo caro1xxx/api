@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from django.core import serializers
+from main.models import Servers
 import json
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
@@ -18,7 +19,11 @@ class Ping(APIView):
         if delay == False:
           ret['code'] = 500
           ret['message'] = "timeout"
-        ret['ms'] = json.loads(delay)['ms']
+        serverFields = Servers.objects.filter(nodeTag=int(nodeTag)).first()
+        if serverFields is not None:
+          ret['ms'] = json.loads(delay)['ms']
+          serverFields.delay = 32 if int(float(ret['ms'][0])) < 20 else int(float(ret['ms'][0]))
+          serverFields.save()
         return JsonResponse(ret)
       except Exception as e:
         print(str(e))

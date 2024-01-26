@@ -68,7 +68,6 @@ class Servers(models.Model):
   nodeTag = models.IntegerField(null=True)
 
 
-
 class Invites(models.Model):
   invite = models.ForeignKey(Member, on_delete=models.CASCADE)
   inviteCode = models.CharField(max_length=6)

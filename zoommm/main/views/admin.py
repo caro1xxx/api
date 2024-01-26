@@ -2,7 +2,7 @@ from django.http import JsonResponse,HttpResponse
 from rest_framework.views import APIView
 from main.models import Member,Orders,Plans
 import json
-from main.tools import checkParams,encrypteToken,getCurrentTimestamp,getCurrentYMD,toMD5,clearExpiredUseToSide
+from main.tools import checkParams,encrypteToken,getCurrentTimestamp,getCurrentYMD,toMD5,clearExpiredUseToSide,generateRandomString,changeMarzbanUserData,getMonthOverResetDate
 from main.task import asyncSendMail
 from zoommm.settings import ADMIN_EMAIL,TINAXINGKEY
 from main.task import asyncAddProperty
@@ -50,7 +50,24 @@ class PayCallback(APIView):
           ret['code'] = 422
           ret['message'] = "非法"
           return JsonResponse(ret)
-        asyncAddProperty.delay(param,out_trade_no)
+        memberFields = Member.objects.filter(email=param).first()
+        ordersFields = Orders.objects.filter(no=out_trade_no,status=False).first()
+        memberFields.expireTime = getCurrentTimestamp()+ordersFields.plan.time*60*60*24 if memberFields.expireTime <= getCurrentTimestamp() else memberFields.expireTime + ordersFields.plan.time*60*60*24
+        # requests.get(f"http://127.0.0.1:8001/api/v1/zoommm/corn?taskName=clearUser&excuteTime={memberFields.expireTime}&target={memberFields.email}")
+        memberFields.plan = ordersFields.plan
+        plainText = generateRandomString(16)
+        loopFlow = ordersFields.plan.flow
+        if ordersFields.plan.time > 30:
+          loopFlow = ordersFields.plan.flow / (ordersFields.plan.time / 30)
+          memberFields.nextReset = getMonthOverResetDate()
+        createResult = changeMarzbanUserData(ordersFields.user.email,int((loopFlow*1073741824)/ordersFields.plan.real),memberFields.expireTime,'year' if ordersFields.plan.time == 360 else "month" if ordersFields.plan.time > 30 else 'no_reset',ordersFields.plan.real)
+        planFields = Plans.objects.filter(no=ordersFields.plan.no).first()
+        if planFields is not None:
+          planFields.stock = planFields.stock - 1
+          planFields.save()
+        ordersFields.status = True
+        memberFields.save()
+        ordersFields.save()
         return HttpResponse("success")
       except Exception as e:
         print(str(e))

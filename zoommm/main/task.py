@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from main.models import Invites,Member,Orders,Plans
 from zoommm.settings import EMAIL_HOST_USER
 from django.core.cache import cache
-from main.tools import generateRandomString,getMonthOverResetDate,postCreateNodeUser,getCurrentTimestamp
+from main.tools import generateRandomString,getMonthOverResetDate,getCurrentTimestamp,changeMarzbanUserData
 import requests
 
 
@@ -27,14 +27,14 @@ def asyncAddProperty(param,out_trade_no):
   memberFields = Member.objects.filter(email=param).first()
   ordersFields = Orders.objects.filter(no=out_trade_no,status=False).first()
   memberFields.expireTime = getCurrentTimestamp()+ordersFields.plan.time*60*60*24 if memberFields.expireTime <= getCurrentTimestamp() else memberFields.expireTime + ordersFields.plan.time*60*60*24
-  requests.get(f"http://127.0.0.1:8001/api/v1/zoommm/corn?taskName=clearUser&excuteTime={memberFields.expireTime}&target={memberFields.email}")
+  # requests.get(f"http://127.0.0.1:8001/api/v1/zoommm/corn?taskName=clearUser&excuteTime={memberFields.expireTime}&target={memberFields.email}")
   memberFields.plan = ordersFields.plan
   plainText = generateRandomString(16)
   loopFlow = ordersFields.plan.flow
   if ordersFields.plan.time > 30:
     loopFlow = ordersFields.plan.flow / (ordersFields.plan.time / 30)
     memberFields.nextReset = getMonthOverResetDate()
-  createResult = postCreateNodeUser(ordersFields.user.email,plainText,int((loopFlow*1073741824)/ordersFields.plan.real))
+  createResult = changeMarzbanUserData(ordersFields.user.email,int((loopFlow*1073741824)/ordersFields.plan.real),memberFields.expireTime,'year' if ordersFields.plan.time == 360 else "month" if ordersFields.plan.time > 30 else 'no_reset',ordersFields.plan.title)
   planFields = Plans.objects.filter(no=ordersFields.plan.no).first()
   if planFields is not None:
     planFields.stock = planFields.stock - 1
