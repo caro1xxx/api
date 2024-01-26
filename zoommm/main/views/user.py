@@ -165,7 +165,7 @@ class Order(APIView):
                 "pid":TINAXINGID,
                 "type":way,
                 "out_trade_no":orderFields.no,
-                "notify_url":"http://154.204.26.79:8001/api/v1/zoommm/paymentStatus",
+                "notify_url":"https://zoomm.cloud/api/v1/zoommm/paymentStatus",
                 "name":orderFields.plan.title+"订阅",
                 "money":orderFields.actuallyPaid,
                 "clientip":getClientIp(request),
