@@ -7,6 +7,7 @@ import { authRegister } from "../api/user";
 import { useAppDispatch } from "../redux/hooks";
 import { saveToken } from "../redux/modules/user";
 import { useLocation } from "react-router-dom";
+import { useReactive } from "ahooks";
 
 const Wrap = styled.div`
   height: calc(90vh);
@@ -71,6 +72,9 @@ const Register = (props: Props) => {
   const searchParams = new URLSearchParams(location.search);
   const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
+  const state = useReactive({
+    loading: false,
+  });
   return (
     <Wrap>
       {contextHolder}
@@ -95,6 +99,7 @@ const Register = (props: Props) => {
                 (token: string) => {
                   dispatch(saveToken(token));
                 },
+                state,
                 e.code
               );
             }}
@@ -163,6 +168,7 @@ const Register = (props: Props) => {
             </Form.Item>
             <Form.Item>
               <Button
+                loading={state.loading}
                 style={{ width: "100%", backgroundColor: "#161616" }}
                 icon={<LoginOutlined style={{ color: "#cecece" }} />}
                 type="primary"
