@@ -155,6 +155,7 @@ class Order(APIView):
                         return JsonResponse(ret)
                 else:
                     userFields = Member.objects.create(email=username,password=password,createTime=getCurrentTimestamp(),code=generateRandomString(6))
+                    createMarzbanUser(userFields.email)
             orderFields = Orders.objects.filter(no=order).first()
             orderFields.user = userFields
             orderFields.save()

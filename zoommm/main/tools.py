@@ -106,7 +106,7 @@ def createMarzbanUser(username):
             "shadowsocks":{}
         },
         "inbounds": {
-            "shadowsocks":[]
+            "shadowsocks":["Shadowsocks TCP"]
         },
         "expire": getCurrentTimestamp(),
         "data_limit": 0,
