@@ -1,5 +1,5 @@
 from django.urls import re_path, path
-from main.views.user import Login,Register,Order,Discount,Profile,Advanced,Invite
+from main.views.user import Login,Register,Order,Discount,Profile,Invite
 from main.views.plan import Plan
 from main.views.server import Server
 from main.views.admin import PayCallback,Corn
@@ -13,7 +13,6 @@ urlpatterns = [
     re_path(r'^api/v1/zoommm/discount$', Discount.as_view()),
     re_path(r'^api/v1/zoommm/server$', Server.as_view()),
     re_path(r'^api/v1/zoommm/profile$', Profile.as_view()),
-    re_path(r'^api/v1/zoommm/advanced$', Advanced.as_view()),
     re_path(r'^api/v1/zoommm/invite$', Invite.as_view()),
     re_path(r'^api/v1/zoommm/ping$', Ping.as_view()),
     re_path(r'^api/v1/zoommm/mailTools$', MailTools.as_view()),

@@ -111,7 +111,7 @@ CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
 CELERY_ACCEPT_CONTENT = ['application/json', ]
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_RESULT_EXPIRES = 1
+CELERY_RESULT_EXPIRES = 3600
 
 # admin email
 ADMIN_EMAIL = 'caro1xxxhv@gmail.com'
@@ -129,8 +129,13 @@ TINAXINGKEY = "zB7ofiiImTtBiK7P7KPTiDIpfRfKm9et"
 
 
 # side
-SIDEBACKENDURL = "https://side.voteinfo.life/api/v1/side/"
+SIDEBACKENDURL = "https://subconvert.t7xqp3r.life/api/v1/side/"
 SIDERKEY = "7cBm7JdBU2i84y"
 
 # scheduler
 DJANGO_APSCHEDULER_EXECUTION_LOG = True
+
+
+# marzban
+MARZAN_URL = "http://46.250.249.209:8000"
+MARZAN_AUTHORIZATION = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiZXpvcyIsImFjY2VzcyI6InN1ZG8iLCJpYXQiOjE3MDYxODUyMzAsImV4cCI6MTcwNjI3MTYzMH0.iRFJWKnaO32YSCQ4v88wa-gsX5dHVbLjWld0lpNBnzE'

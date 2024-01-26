@@ -3,7 +3,8 @@ from rest_framework.views import APIView
 from main.models import Member,Plans,Orders,DiscountCode,Invites
 from django.core import serializers
 import json
-from main.tools import checkParams,encrypteToken,getCurrentTimestamp,generateRandomString,decodeToken,encrypteSHA224,createOrder,getClientIp,toMD5,getUserFlow,getSubDispatch
+from main.tools import checkParams,encrypteToken,getCurrentTimestamp,generateRandomString,decodeToken,encrypteSHA224 ,\
+                    createOrder,getClientIp,toMD5,createMarzbanUser,getMarzbanUserProfile
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from main.task import asyncAddInviteUser
@@ -41,7 +42,6 @@ class Register(APIView):
             username = json.loads(request.body).get('username', None)
             password = json.loads(request.body).get('password', None)
             code = json.loads(request.body).get('code', None)
-            
             if checkParams([username,password]) == False:
                 ret['code'] = 403
                 ret['message'] = '参数错误'
@@ -53,6 +53,7 @@ class Register(APIView):
                 return JsonResponse(ret)
             userFields = Member.objects.create(email=username, password=password, createTime=getCurrentTimestamp(),code=generateRandomString(6))
             ret['token'] = encrypteToken({"username": username})
+            createMarzbanUser(username)
             if code is not None and len(code)==6:
                 asyncAddInviteUser.delay(username,code)
             return JsonResponse(ret)
@@ -63,13 +64,13 @@ class Register(APIView):
 
 class Profile(APIView):
     def get(self, request, *args, **kwargs):
-        ret = {'code': 200, 'message': '注册成功'}
+        ret = {'code': 200, 'message': '获取成功'}
         try:
             username = request.payload_data["username"]
             memberFields = Member.objects.filter(email=username).first()
             ret['data'] = {
-                "plan":memberFields.plan.title,
-                "subLink":"",
+                "plan": "未订阅" if memberFields.plan is None else  memberFields.plan.title,
+                "subLink":"None",
                 "expireTime":memberFields.expireTime,
                 "used":-1,
                 "remaining":-1,
@@ -81,34 +82,17 @@ class Profile(APIView):
                 "cloudRules":memberFields.cloudRules,
                 "reset":memberFields.nextReset
             }
-            userFlow = getUserFlow(memberFields.email)
-            if userFlow != False:
-                jsonUserFlow = json.loads(userFlow)
-                ret['data']["subLink"] = "link"
-                ret['data']['used'] = jsonUserFlow["download"]+jsonUserFlow["upload"]
-                ret['data']['remaining'] =jsonUserFlow["quota"] - (jsonUserFlow["download"]+jsonUserFlow["upload"])
-            return JsonResponse(ret)
-        except Exception as e:
-            print(str(e))
-            return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
-
-
-class Advanced(APIView):
-    def get(self, request, *args, **kwargs):
-        ret = {'code': 200, 'message': '获取成功'}
-        try:
-            sub = request.GET.get('sub', None)
-            rules = request.GET.get('rules', None)
-            username = request.payload_data["username"]
-            memberFields = Member.objects.filter(email=username).first()
-            if memberFields.expireTime < getCurrentTimestamp():
-                ret['code'] = 412
-                ret['message'] = "未订阅"
-            dispatch = getSubDispatch(username)
-            if dispatch == False:
-                ret['code'] = 432
-                ret['message'] = '系统错误,请刷新网页'
-            ret['data'] = {"convert":json.loads(dispatch)["convert"],}
+            if memberFields.expireTime > getCurrentTimestamp():
+                userProfile = getMarzbanUserProfile(memberFields.email)
+                if userProfile != False:
+                    ret['data']["used"] = int(userProfile["used_traffic"] * memberFields.plan.real)
+                    ret['data']['remaining'] = int(userProfile["data_limit"]* memberFields.plan.real) -  int(userProfile["used_traffic"] * memberFields.plan.real)
+                    ret['data']['reset'] = userProfile['data_limit_reset_strategy']
+                    ret['data']['status'] = userProfile['status']
+                    ret['data']['subLink'] = f"https://subconvert.t7xqp3r.life/api/v1/side/ZOOM%E6%9C%BA%E5%9C%BA?token={username}"
+                    resposne = JsonResponse(ret)
+                    resposne ['Cache-Control'] = "max-age=1800"
+                    return resposne
             return JsonResponse(ret)
         except Exception as e:
             print(str(e))
@@ -240,6 +224,7 @@ class Discount(APIView):
 
 
 class Invite(APIView):
+    @method_decorator(cache_control(public=True, max_age=1800))
     def get(self, request, *args, **kwargs):
         ret = {'code': 200, 'message': '成功'}
         try:
