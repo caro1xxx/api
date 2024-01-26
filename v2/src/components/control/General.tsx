@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Switch, Input, Divider, Spin, Progress, message, Modal } from "antd";
 import { formatTimestamp, formatBytes, getCurrentTimeStamp } from "../../utils/tools";
 import { Link } from "react-router-dom";
-import { AdvancedNode, Profile } from "../../api/user";
+import { Profile } from "../../api/user";
 import { useEffect, useRef } from "react";
 import ClipboardJS from "clipboard";
 import Qr from "../mods/Qr";
@@ -210,22 +210,14 @@ const General = (props: Props) => {
         state.baseConfig[4].value = result.data.marketingEmailNotify;
         state.baseConfig[5].value = result.data.rateLimit === 0 ? "无限制" : result.data.rateLimit;
         state.advancedConfig[0].value = result.data.cloudRules;
+        state.subscription = result.data.subLink;
         if (result.data.reset !== "0" && result.data.reset !== 0) {
           state.subConfig.push({
-            title: "下次流量重置日期",
-            value: result.data.reset,
+            title: "流量重置日期",
+            value: result.data.reset === "no_reset" ? "无重置" : "每月",
             type: "reset",
           });
         }
-      }
-    },
-  });
-
-  const { loading: linkLoading } = useRequest(AdvancedNode, {
-    cacheKey: "AdvancedNode",
-    onSuccess: (result) => {
-      if (result.code === 200) {
-        state.subscription = result.data.convert;
       }
     },
   });
@@ -429,7 +421,7 @@ const General = (props: Props) => {
             <div>{item.title}</div>
             <div style={{ flex: 1 }}></div>
             {item.type === "app" ? (
-              linkLoading ? (
+              loading ? (
                 <Spin />
               ) : (
                 <>
@@ -442,7 +434,7 @@ const General = (props: Props) => {
                 </>
               )
             ) : item.type === "copy" ? (
-              linkLoading ? (
+              loading ? (
                 <Spin />
               ) : (
                 <div
@@ -453,7 +445,7 @@ const General = (props: Props) => {
                   复制
                 </div>
               )
-            ) : linkLoading ? (
+            ) : loading ? (
               <Spin />
             ) : (
               <div onClick={item.clikc} style={{ color: "green" }}>

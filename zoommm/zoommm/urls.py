@@ -17,7 +17,6 @@ urlpatterns = [
     re_path(r'^api/v1/zoommm/invite$', Invite.as_view()),
     re_path(r'^api/v1/zoommm/ping$', Ping.as_view()),
     re_path(r'^api/v1/zoommm/mailTools$', MailTools.as_view()),
-
     # admin
     re_path(r'^api/v1/zoommm/paymentStatus$', PayCallback.as_view()),
     re_path(r'^api/v1/zoommm/corn$', Corn.as_view()),
