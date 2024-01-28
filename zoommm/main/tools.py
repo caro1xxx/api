@@ -6,6 +6,7 @@ import random
 import hashlib
 from datetime import datetime,timedelta
 import requests
+from django.core.cache import cache
 
 
 def timestampDatetimeString(timestamp):
@@ -119,7 +120,7 @@ def createMarzbanUser(username):
     headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': settings.MARZAN_AUTHORIZATION
+        'Authorization': 'bearer '+cache.get('token')
     }
     response = requests.post(f"{settings.MARZAN_URL}/api/user", headers=headers, json=data)
     if response.status_code == 200:
@@ -147,7 +148,7 @@ def changeMarzbanUserData(username,flow,expire,reset,planTitle):
     headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': settings.MARZAN_AUTHORIZATION
+        'Authorization': 'bearer '+cache.get('token')
     }
     response = requests.put(f"{settings.MARZAN_URL}/api/user/{username}", headers=headers, json=data)
     if response.status_code == 200:
@@ -160,9 +161,10 @@ def getMarzbanUserProfile(username):
     headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': settings.MARZAN_AUTHORIZATION
+        'Authorization': 'bearer '+cache.get('token')
     }
     response = requests.get(f"{settings.MARZAN_URL}/api/user/{username}", headers=headers)
+    print(cache.get('token'))
     if response.status_code == 200:
         return response.json()
     else:

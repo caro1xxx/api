@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from main.tools import getDelay
 from main.task import asyncSendMail
+from django.core.cache import cache
 
 
 class Ping(APIView):
@@ -42,3 +43,19 @@ class MailTools(APIView):
       except Exception as e:
         print(str(e))
         return JsonResponse({'code': 500, 'message': "timeout"})
+
+
+class Token(APIView):
+  def get(self, request, *args, **kwargs):
+    ret = {'code': 200, 'message': '成功'}
+    try:
+      token = request.GET.get('token', None)
+      key = request.GET.get('key', None)
+      if key != '^8qCyF54YL4x8c@c':
+        ret['code'] = 400
+        return JsonResponse(ret)
+      cache.set('token',token,60 * 60 * 23)
+      return JsonResponse(ret)
+    except Exception as e:
+      print(str(e))
+      return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
