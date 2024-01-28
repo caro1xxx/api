@@ -18,7 +18,7 @@ class Convert(APIView):
       headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': cache.get("token")
+        'Authorization': 'bearer '+cache.get("token")
       }
       response = requests.get(f"{MARZAN_URL}/sub/{token}/info", headers=headers)
       if response.status_code == 200:
