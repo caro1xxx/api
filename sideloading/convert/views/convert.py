@@ -5,8 +5,9 @@ from convert.models import Node
 import json
 import requests
 from urllib.parse import quote
-from convert.tools import getCurrentTimestamp
-from sideloading.settings import MARZAN_AUTHORIZATION,MARZAN_URL
+from convert.tools import getCurrentTimestamp,formatTstoDatetimestamp
+from sideloading.settings import MARZAN_URL
+from django.core.cache import cache
 
 
 class Convert(APIView):
@@ -17,13 +18,14 @@ class Convert(APIView):
       headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': MARZAN_AUTHORIZATION
+        'Authorization': cache.get("token")
       }
-      response = requests.get(f"{MARZAN_URL}/api/user/{token}", headers=headers)
+      response = requests.get(f"{MARZAN_URL}/sub/{token}/info", headers=headers)
       if response.status_code == 200:
         links = response.json()["links"]
         nodeFields = Node.objects.all().order_by("sort")
         replaceNodes = []
+        userSubInfoNode = ""
         for node in nodeFields:
           for link in links:
             if node.ip in link:
@@ -31,13 +33,17 @@ class Convert(APIView):
               puffix = deleteOrigeiInfo[0].split(":1080#")
               protocy = puffix[0].replace(f"{node.ip}",f"{node.entry}#{node.tag}")
               replaceNodes.append(protocy)
+              if userSubInfoNode == "":
+                userSubInfoNode = protocy
               break
-        convertResponse = requests.get(f"http://127.0.0.1:25500/sub?target={'clash' if target is None else target}&tfo={True}&interval=43200&filename={'ZOOM'}&remove_emoji=false&url={quote('|'.join(replaceNodes))}")
+        officeHint = f'{userSubInfoNode.split("#")[0]}#📢超时请刷新订阅 官网https://zoomm.cloud|'
+        userSubInfoNode = f'{userSubInfoNode.split("#")[0]}#💧剩余≈{int(((response.json()["data_limit"] - response.json()["used_traffic"]) * float(response.json()["note"]))/ 1073741824)}GB ⌛到期:{formatTstoDatetimestamp(response.json()["expire"])}|'
+        convertResponse = requests.get(f"http://127.0.0.1:25500/sub?target={'clash' if target is None else target}&tfo={True}&interval=43200&filename={'ZOOM'}&remove_emoji=false&url={quote(officeHint + userSubInfoNode+ '|'.join(replaceNodes))}")
         res = HttpResponse(convertResponse.text)
         res['Subscription-Userinfo'] = f"upload=-1; download={response.json()['used_traffic'] * float(response.json()['note'])}; total={response.json()['data_limit'] * float(response.json()['note'])}; expire={response.json()['expire']}"
         return res
       else:
-        return HttpResponse('TOKEN_ERROR     Zoommm-专业机场网络隐私安全')
+        return HttpResponse('TOKEN_ERROR  Zoommm-专业机场网络隐私安全 https://zoomm.cloud')
     except Exception as e:
       print(str(e))
-      return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
+      return JsonResponse({'code': 500, 'message': 'TOKEN_ERROR  Zoommm-专业机场网络隐私安全 https://zoomm.cloud'})
