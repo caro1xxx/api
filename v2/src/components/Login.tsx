@@ -6,6 +6,7 @@ import Bottom from "./Bottom";
 import { authLogin } from "../api/user";
 import { useAppDispatch } from "../redux/hooks";
 import { saveToken } from "../redux/modules/user";
+import { useReactive } from "ahooks";
 
 const Wrap = styled.div`
   height: calc(90vh);
@@ -67,6 +68,7 @@ type Props = {
 const Login = (props: Props) => {
   const dispatch = useAppDispatch();
   const [messageApi, contextHolder] = message.useMessage();
+  const state = useReactive({ loading: false });
   return (
     <Wrap>
       {contextHolder}
@@ -83,9 +85,16 @@ const Login = (props: Props) => {
             style={{ paddingLeft: "10px", margin: "30px 0px" }}
             initialValues={{ remember: true }}
             onFinish={(e) => {
-              authLogin(e.username, e.password, messageApi, props.close, (token: string) => {
-                dispatch(saveToken(token));
-              });
+              authLogin(
+                e.username,
+                e.password,
+                messageApi,
+                props.close,
+                (token: string) => {
+                  dispatch(saveToken(token));
+                },
+                state
+              );
             }}
             autoComplete="off"
           >
@@ -117,6 +126,7 @@ const Login = (props: Props) => {
             </Form.Item>
             <Form.Item>
               <Button
+                loading={state.loading}
                 style={{ width: "100%", backgroundColor: "#161616" }}
                 icon={<LoginOutlined />}
                 type="primary"

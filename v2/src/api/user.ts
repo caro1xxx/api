@@ -8,8 +8,12 @@ export const authRegister = async (
   msg: any,
   close: () => void,
   save: (token: string) => void,
+  state: {
+    loading: boolean;
+  },
   code?: string
 ) => {
+  state.loading = true;
   let result = await fecther(`register`, { username, password: md5(password), code }, "post");
   if (result.code === 200) {
     save(result.token);
@@ -19,6 +23,7 @@ export const authRegister = async (
   } else {
     msg.info(result.message);
   }
+  state.loading = false;
 };
 
 export const authLogin = async (
@@ -26,8 +31,12 @@ export const authLogin = async (
   password: string,
   msg: any,
   close: () => void,
-  save: (token: string) => void
+  save: (token: string) => void,
+  state: {
+    loading: boolean;
+  }
 ) => {
+  state.loading = true;
   let result = await fecther(`login`, { username, password: md5(password) }, "post");
   if (result.code === 200) {
     save(result.token);
@@ -37,6 +46,7 @@ export const authLogin = async (
   } else {
     msg.info(result.message);
   }
+  state.loading = false;
 };
 
 export const servers = async () => {
@@ -46,11 +56,6 @@ export const servers = async () => {
 
 export const Profile = async () => {
   let result = await fecther(`profile`, {}, "get");
-  return Promise.resolve(result);
-};
-
-export const AdvancedNode = async () => {
-  let result = await fecther(`advanced?sub=true`, {}, "get");
   return Promise.resolve(result);
 };
 

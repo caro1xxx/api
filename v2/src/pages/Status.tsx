@@ -149,7 +149,7 @@ const Status = (props: Props) => {
                     <img
                       height={15}
                       width={15}
-                      src="https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg"
+                      src="https://pic.imgdb.cn/item/65b64638871b83018a518881.png"
                       alt="chatgpt"
                     />
                   )}
