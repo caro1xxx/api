@@ -12,6 +12,7 @@ import ControlBar from "./ControlBar";
 import General from "./control/General";
 import Rules from "./control/Rules";
 import Share from "./control/Share";
+import Learn from "./control/Learn";
 
 const Wrap = styled.div`
   user-select: none;
@@ -221,7 +222,9 @@ const NavBar = (props: Props) => {
             <Rules />
           ) : state.contral === "share" ? (
             <Share />
-          ) : null}
+          ) : (
+            <Learn />
+          )}
         </Drawer>
       </ConfigProvider>
     </Wrap>
