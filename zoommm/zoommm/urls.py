@@ -3,7 +3,7 @@ from main.views.user import Login,Register,Order,Discount,Profile,Invite
 from main.views.plan import Plan
 from main.views.server import Server
 from main.views.admin import PayCallback,Corn
-from main.views.tools import Ping,MailTools
+from main.views.tools import Ping,MailTools,Token
 
 urlpatterns = [
     re_path(r'^api/v1/zoommm/login$', Login.as_view()),
@@ -19,4 +19,5 @@ urlpatterns = [
     # admin
     re_path(r'^api/v1/zoommm/paymentStatus$', PayCallback.as_view()),
     re_path(r'^api/v1/zoommm/corn$', Corn.as_view()),
+    re_path(r'^api/v1/zoommm/token$', Token.as_view()),
 ]
