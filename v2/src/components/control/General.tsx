@@ -78,6 +78,11 @@ const General = (props: Props) => {
         value: [0, 0],
         type: "flow",
       },
+      {
+        title: "TG群组",
+        value: [0, 0],
+        type: "tg",
+      },
     ],
     baseConfig: [
       {
@@ -316,6 +321,16 @@ const General = (props: Props) => {
             ) : item.type === "reset" ? (
               !loading ? (
                 <div>{item.value}</div>
+              ) : (
+                <div>
+                  <Spin />
+                </div>
+              )
+            ) : item.type === "tg" ? (
+              !loading ? (
+                <Link to={"https://t.me/+m6oaW9EOMKYzMDI1"} target="_blank">
+                  t.me/+m6oaW9EOMKYzM
+                </Link>
               ) : (
                 <div>
                   <Spin />
