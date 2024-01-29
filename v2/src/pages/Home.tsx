@@ -7,6 +7,8 @@ import { Server, TypesPlanItem } from "../types/state";
 import PlanItem from "../components/PlanItem";
 import { servers, ping } from "../api/user";
 import Bottom from "../components/Bottom";
+import PlanItemLoading from "../components/PlanItemLoading";
+import Custom from "../components/Custom";
 
 const Wrap = styled.div`
   padding-top: 100px;
@@ -59,7 +61,6 @@ const Wrap = styled.div`
     }
   }
 `;
-
 const Recommend = styled.div`
   width: 1200px;
   margin: 20px auto;
@@ -80,7 +81,6 @@ const Recommend = styled.div`
     grid-row-gap: 20px;
   }
 `;
-
 const Status = styled.div`
   margin-top: 20px;
   .wrap {
@@ -165,6 +165,27 @@ const Descriptioon = styled.div`
     color: #8e8e8e;
   }
 `;
+const Switch = styled.div`
+  width: 350px;
+  background-color: #dfdfdf;
+  margin: 20px auto;
+  border-radius: 50px;
+  height: 40px;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  > div {
+    width: 33.3%;
+    text-align: center;
+    line-height: 30px;
+    transition: opacity 0.7s ease;
+  }
+  > div:hover {
+    opacity: 0.6;
+  }
+`;
 
 type Props = {};
 
@@ -172,8 +193,9 @@ const Home = (props: Props) => {
   const navigate = useNavigate();
   const state = useReactive({
     serverDate: [] as Server[],
+    switchType: "cycle",
   });
-  const { data, loading } = useRequest(() => getPlansToCount(4), {
+  const { data, loading } = useRequest(() => getPlansToCount(4, "cycle"), {
     cacheKey: "plans",
   });
   const { loading: serverLoding } = useRequest(servers, {
@@ -183,6 +205,9 @@ const Home = (props: Props) => {
         state.serverDate.push({ ...item, loading: false });
       });
     },
+  });
+  const { data: flowPlans } = useRequest(() => getPlansToCount(3, "flow"), {
+    cacheKey: "flowPlans",
   });
   const pingMs = async (id: number, idx: number) => {
     state.serverDate[idx].loading = true;
@@ -213,12 +238,58 @@ const Home = (props: Props) => {
           <div className="server"></div>
         </div>
         <div style={{ marginTop: "100px", fontSize: "30px", textAlign: "center" }}>推薦訂閲</div>
-        <Recommend>
-          {!loading &&
-            data.map((item: TypesPlanItem) => {
-              return <PlanItem key={item.pk} data={item} />;
-            })}
-        </Recommend>
+        <Switch>
+          <div
+            onClick={() => (state.switchType = "cycle")}
+            style={{
+              backgroundColor: state.switchType === "cycle" ? "#2c2c2c" : "#dfdfdf",
+              color: state.switchType === "cycle" ? "#dfdfdf" : "#2c2c2c",
+              borderRadius: "50px",
+              height: "100%",
+            }}
+          >
+            按周期
+          </div>
+          <div
+            onClick={() => (state.switchType = "flow")}
+            style={{
+              backgroundColor: state.switchType === "flow" ? "#2c2c2c" : "#dfdfdf",
+              color: state.switchType === "flow" ? "#dfdfdf" : "#2c2c2c",
+              borderRadius: "50px",
+              height: "100%",
+            }}
+          >
+            按流量
+          </div>
+          <div
+            onClick={() => (state.switchType = "zdy")}
+            style={{
+              backgroundColor: state.switchType === "zdy" ? "#2c2c2c" : "#dfdfdf",
+              color: state.switchType === "zdy" ? "#dfdfdf" : "#2c2c2c",
+              borderRadius: "50px",
+              height: "100%",
+            }}
+          >
+            自定义
+          </div>
+        </Switch>
+        {state.switchType === "zdy" ? (
+          <Custom servers={state.serverDate} />
+        ) : (
+          <Recommend>
+            {!loading
+              ? state.switchType === "cycle"
+                ? data.map((item: TypesPlanItem) => {
+                    return <PlanItem key={item.pk} data={item} />;
+                  })
+                : flowPlans.map((item: TypesPlanItem) => {
+                    return <PlanItem key={item.pk} data={item} />;
+                  })
+              : new Array(4).fill("").map((_, index) => {
+                  return <PlanItemLoading key={index} />;
+                })}
+          </Recommend>
+        )}
         <Link to={"/plan"} className="more">
           查看全部订阅
         </Link>

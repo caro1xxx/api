@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "https://zoomm.b-cdn.net/static/css/main.dc15bbb7.css",
-    "main.js": "https://zoomm.b-cdn.net/static/js/main.b04c119b.js",
+    "main.js": "https://zoomm.b-cdn.net/static/js/main.c705b5e0.js",
     "static/media/Joyfont-ZeusGB-Flash-Diamond.woff": "https://zoomm.b-cdn.net/static/media/Joyfont-ZeusGB-Flash-Diamond.648691044d255aa68d6f.woff",
     "static/media/Joyfont-ZeusGB-Flash-Diamond.woff2": "https://zoomm.b-cdn.net/static/media/Joyfont-ZeusGB-Flash-Diamond.efb24af9dbd4edb152bc.woff2",
     "static/media/Consolas.woff": "https://zoomm.b-cdn.net/static/media/Consolas.6e16f5890479f812f1dd.woff",
@@ -12,10 +12,10 @@
     "static/media/BunglerLight-Regular.woff2": "https://zoomm.b-cdn.net/static/media/BunglerLight-Regular.ec53c4b2b851f90d8b3c.woff2",
     "index.html": "https://zoomm.b-cdn.net/index.html",
     "main.dc15bbb7.css.map": "https://zoomm.b-cdn.net/static/css/main.dc15bbb7.css.map",
-    "main.b04c119b.js.map": "https://zoomm.b-cdn.net/static/js/main.b04c119b.js.map"
+    "main.c705b5e0.js.map": "https://zoomm.b-cdn.net/static/js/main.c705b5e0.js.map"
   },
   "entrypoints": [
     "https://zoomm.b-cdn.net/static/css/main.dc15bbb7.css",
-    "https://zoomm.b-cdn.net/static/js/main.b04c119b.js"
+    "https://zoomm.b-cdn.net/static/js/main.c705b5e0.js"
   ]
 }

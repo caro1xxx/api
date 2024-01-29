@@ -94,7 +94,15 @@ const PlanItem = (props: Props) => {
         <div style={{ flex: 1 }}></div>
         <div className="price">
           ￥{props.data.fields.price}
-          <span style={{ fontSize: "10px" }}>/{props.data.fields.time}天</span>
+          <span style={{ fontSize: "10px" }}>
+            /
+            {props.data.fields.type === "cycle" ? (
+              props.data.fields.time
+            ) : (
+              <span style={{ fontSize: "20px" }}>&infin;</span>
+            )}
+            天
+          </span>
         </div>
       </div>
       <Featrue>
@@ -115,7 +123,15 @@ const PlanItem = (props: Props) => {
               p-id="2358"
             ></path>
           </svg>
-          每<span>30</span>天<span>{props.data.fields.flow / (props.data.fields.time / 30)}</span>GB 流量
+          {props.data.fields.type === "cycle" ? (
+            <>
+              每<span>30</span>天<span>{props.data.fields.flow / (props.data.fields.time / 30)}</span>GB 流量
+            </>
+          ) : (
+            <>
+              <span>不限时{props.data.fields.flow}GB</span> 流量
+            </>
+          )}
         </div>
         <div className="center item">
           <svg

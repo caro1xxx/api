@@ -14,6 +14,7 @@ export interface TypesPlanItem {
     giftSumCount: number;
     giftCurrentCount: number;
     giftPrice: string;
+    type: string;
   };
 }
 
