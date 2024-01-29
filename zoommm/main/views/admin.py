@@ -57,10 +57,10 @@ class PayCallback(APIView):
         memberFields.plan = ordersFields.plan
         plainText = generateRandomString(16)
         loopFlow = ordersFields.plan.flow
-        if ordersFields.plan.time > 30:
+        if ordersFields.plan.time > 30 and ordersFields.plan.time <= 360:
           loopFlow = ordersFields.plan.flow / (ordersFields.plan.time / 30)
           memberFields.nextReset = getMonthOverResetDate()
-        createResult = changeMarzbanUserData(ordersFields.user.email,int((loopFlow*1073741824)/ordersFields.plan.real),memberFields.expireTime,'year' if ordersFields.plan.time == 360 else "month" if ordersFields.plan.time > 30 else 'no_reset',ordersFields.plan.real)
+        createResult = changeMarzbanUserData(ordersFields.user.email,int((loopFlow*1073741824)/ordersFields.plan.real),memberFields.expireTime,"month" if ordersFields.plan.time > 30 and ordersFields.plan.time <= 360 else 'no_reset',ordersFields.plan.real)
         planFields = Plans.objects.filter(no=ordersFields.plan.no).first()
         if planFields is not None:
           planFields.stock = planFields.stock - 1

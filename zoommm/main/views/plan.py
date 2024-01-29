@@ -14,10 +14,11 @@ class Plan(APIView):
     ret = {'code': 200, 'message': '成功'}
     try:
       count = request.GET.get('count', None)
+      type = request.GET.get('type', 'cycle')
       if count is None:
         ret['data'] = json.loads(serializers.serialize('json', Plans.objects.all().order_by('pk')))
       else:
-        ret['data'] = json.loads(serializers.serialize('json', Plans.objects.all().order_by('pk')[:int(count)]))
+        ret['data'] = json.loads(serializers.serialize('json', Plans.objects.filter(type=type).order_by('pk')[:int(count)]))
       return JsonResponse(ret)
     except Exception as e:
         print(str(e))
