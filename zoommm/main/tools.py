@@ -101,9 +101,10 @@ def clearExpiredUseToSide(username):
 
 # Marzban
 def createMarzbanUser(username):
-    if cache.get('token',None) is None:
-        token = marzbanAuth()
-        cache.set('token', token, 60*60*12)
+    marzbanToken = cache.get('token',None)
+    if marzbanToken is None:
+        marzbanToken = marzbanAuth()
+        cache.set('token', marzbanToken, 60*60*5)
     data = {
         "username": username,
         "proxies": {
@@ -123,7 +124,7 @@ def createMarzbanUser(username):
     headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'bearer '+cache.get('token')
+        'Authorization': 'bearer '+ marzbanToken
     }
     response = requests.post(f"{settings.MARZAN_URL}/api/user", headers=headers, json=data)
     if response.status_code == 200:
@@ -133,9 +134,10 @@ def createMarzbanUser(username):
 
 
 def changeMarzbanUserData(username,flow,expire,reset,planTitle):
-    if cache.get('token',None) is None:
-        token = marzbanAuth()
-        cache.set('token', token, 60*60*12)
+    marzbanToken = cache.get('token',None)
+    if marzbanToken is None:
+        marzbanToken = marzbanAuth()
+        cache.set('token', marzbanToken, 60*60*5)
     data = {
         "proxies": {
             "shadowsocks":{}
@@ -154,7 +156,7 @@ def changeMarzbanUserData(username,flow,expire,reset,planTitle):
     headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'bearer '+cache.get('token')
+        'Authorization': 'bearer '+ marzbanToken
     }
     response = requests.put(f"{settings.MARZAN_URL}/api/user/{username}", headers=headers, json=data)
     if response.status_code == 200:
@@ -164,13 +166,14 @@ def changeMarzbanUserData(username,flow,expire,reset,planTitle):
 
 
 def getMarzbanUserProfile(username):
-    if cache.get('token',None) is None:
-        token = marzbanAuth()
-        cache.set('token', token, 60*60*12)
+    marzbanToken = cache.get('token',None)
+    if marzbanToken is None:
+        marzbanToken = marzbanAuth()
+        cache.set('token', marzbanToken, 60*60*5)
     headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'bearer '+cache.get('token')
+        'Authorization': 'bearer '+ marzbanToken
     }
     response = requests.get(f"{settings.MARZAN_URL}/api/user/{username}", headers=headers)
     if response.status_code == 200:
@@ -194,4 +197,4 @@ def marzbanAuth():
     }
     response = requests.post(f"{settings.MARZAN_URL}/api/admin/token", headers=headers, data=data)
     if response.status_code == 200:
-        print(response.json()["access_token"])
+        return response.json()["access_token"]
