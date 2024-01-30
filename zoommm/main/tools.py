@@ -101,6 +101,9 @@ def clearExpiredUseToSide(username):
 
 # Marzban
 def createMarzbanUser(username):
+    if cache.get('token',None) is None:
+        token = marzbanAuth()
+        cache.set('token', token, 60*60*12)
     data = {
         "username": username,
         "proxies": {
@@ -130,6 +133,9 @@ def createMarzbanUser(username):
 
 
 def changeMarzbanUserData(username,flow,expire,reset,planTitle):
+    if cache.get('token',None) is None:
+        token = marzbanAuth()
+        cache.set('token', token, 60*60*12)
     data = {
         "proxies": {
             "shadowsocks":{}
@@ -158,14 +164,34 @@ def changeMarzbanUserData(username,flow,expire,reset,planTitle):
 
 
 def getMarzbanUserProfile(username):
+    if cache.get('token',None) is None:
+        token = marzbanAuth()
+        cache.set('token', token, 60*60*12)
     headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': 'bearer '+cache.get('token')
     }
     response = requests.get(f"{settings.MARZAN_URL}/api/user/{username}", headers=headers)
-    print(cache.get('token'))
     if response.status_code == 200:
         return response.json()
     else:
         return False
+
+
+def marzbanAuth():
+    headers = {
+        'accept': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+    data = {
+        'grant_type': '',
+        'username': 'bezos',
+        'password': '4896qwer',
+        'scope': '',
+        'client_id': '',
+        'client_secret': ''
+    }
+    response = requests.post(f"{settings.MARZAN_URL}/api/admin/token", headers=headers, data=data)
+    if response.status_code == 200:
+        print(response.json()["access_token"])
