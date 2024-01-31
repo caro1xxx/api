@@ -85,7 +85,7 @@ const NavBar = (props: Props) => {
     showContral: false,
     contral: "",
     openContralBar: false,
-    showLottery: true,
+    showLottery: false,
   });
 
   useEffect(() => {
@@ -95,9 +95,27 @@ const NavBar = (props: Props) => {
     if (window.innerWidth <= 530) {
       state.authHeight = 70;
     }
+    (() => {
+      function block() {
+        if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
+          document.body.innerHTML = "检测到非法调试,请关闭后刷新重试!";
+        }
+        setInterval(() => {
+          (function () {
+            return false;
+          })
+            ["constructor"]("debugger")
+            ["call"]();
+        }, 50);
+      }
+      try {
+        block();
+      } catch (err) {}
+    })();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <Wrap>
       <div className="activte">
@@ -117,7 +135,7 @@ const NavBar = (props: Props) => {
         <Link to={"/status"} className="barItem">
           <Button type="text">状态</Button>
         </Link>
-        <div className="barItem">
+        <div className="barItem" onClick={() => (state.showLottery = true)}>
           <Button type="text">抽奖</Button>
         </div>
         {token ? (

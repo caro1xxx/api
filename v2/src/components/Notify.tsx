@@ -32,6 +32,9 @@ const Wrap = styled.div`
     border-top: 1px solid #cececed3;
     padding: 10px 10px;
     color: #2c2c2c;
+    > span {
+      color: #6389f0;
+    }
     > a {
       color: #6389f0;
     }
@@ -94,7 +97,7 @@ const Notify = (props: Props) => {
         </svg>
       </div>
       <div className="content">
-        🎉抽奖系统已上线🎉 100%中奖率! 点击导航栏"抽奖"按钮 欢迎加入TG群组:
+        🎉抽奖系统已上线🎉 <span>100%中奖率!</span> 点击导航栏"抽奖"按钮 欢迎加入TG群组:
         <Link to={"https://t.me/ZoomCloud"} target="_blank">
           t.me/ZoomCloud
         </Link>
