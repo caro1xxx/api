@@ -186,3 +186,33 @@ export const ping = () => {
     }, 1500);
   });
 };
+
+export const timeAgo = (timestamp: number) => {
+  const now = new Date().getTime();
+  const seconds = Math.floor((now - timestamp) / 1000);
+
+  const minute = 60;
+  const hour = minute * 60;
+  const day = hour * 24;
+  const week = day * 7;
+  const month = day * 30;
+
+  if (seconds < minute) {
+    return "刚刚";
+  } else if (seconds < hour) {
+    const minutes = Math.floor(seconds / minute);
+    return `${minutes}分钟之前`;
+  } else if (seconds < day) {
+    const hours = Math.floor(seconds / hour);
+    return `${hours}小时之前`;
+  } else if (seconds < week) {
+    const days = Math.floor(seconds / day);
+    return `${days}天之前`;
+  } else if (seconds < month) {
+    const weeks = Math.floor(seconds / week);
+    return `${weeks}周之前`;
+  } else {
+    const months = Math.floor(seconds / month);
+    return `${months}月之前`;
+  }
+};

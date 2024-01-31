@@ -9,6 +9,9 @@ import { servers, ping } from "../api/user";
 import Bottom from "../components/Bottom";
 import PlanItemLoading from "../components/PlanItemLoading";
 import Custom from "../components/Custom";
+import Notify from "../components/Notify";
+import { getStorage, setStorage } from "../utils/tools";
+import { useEffect } from "react";
 
 const Wrap = styled.div`
   padding-top: 100px;
@@ -194,6 +197,7 @@ const Home = (props: Props) => {
   const state = useReactive({
     serverDate: [] as Server[],
     switchType: "cycle",
+    showNotify: false,
   });
   const { data, loading } = useRequest(() => getPlansToCount(4, "cycle"), {
     cacheKey: "plans",
@@ -219,6 +223,14 @@ const Home = (props: Props) => {
     }
     state.serverDate[idx].loading = false;
   };
+
+  useEffect(() => {
+    if (state.showNotify) return;
+    if (!getStorage("closeNotify")) {
+      state.showNotify = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Wrap>
       <div className="body">
@@ -423,6 +435,14 @@ const Home = (props: Props) => {
           </div>
         </Descriptioon>
       </div>
+      {state.showNotify && (
+        <Notify
+          close={() => {
+            state.showNotify = false;
+            setStorage("closeNotify", 1);
+          }}
+        />
+      )}
       <Bottom />
     </Wrap>
   );
