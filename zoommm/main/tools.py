@@ -99,6 +99,11 @@ def clearExpiredUseToSide(username):
         return False
 
 
+def getCurrentDate():
+    current_date = datetime.now()
+    return current_date.strftime("%Y/%m/%d")
+
+
 # Marzban
 def createMarzbanUser(username):
     marzbanToken = cache.get('token',None)
@@ -198,3 +203,5 @@ def marzbanAuth():
     response = requests.post(f"{settings.MARZAN_URL}/api/admin/token", headers=headers, data=data)
     if response.status_code == 200:
         return response.json()["access_token"]
+
+

@@ -75,3 +75,19 @@ class Invites(models.Model):
   inviteTime = models.IntegerField()
   subscription = models.BooleanField(default=False)
   commission = models.CharField(max_length=12,default="0")
+
+
+class LotteryRecord(models.Model):
+  code = models.CharField(max_length=16,unique=True,primary_key=True,db_index=True)
+  date = models.CharField(max_length=24)
+  member = models.ForeignKey(Member, on_delete=models.CASCADE,null=True)
+  exchange = models.BooleanField(default=False)
+  prize = models.CharField(max_length=32)
+  time = models.IntegerField()
+
+class PrizePool(models.Model):
+  name = models.CharField(max_length=32)
+  type = models.CharField(max_length=16)
+  icon = models.TextField()
+  idx = models.IntegerField()
+  weights = models.IntegerField()

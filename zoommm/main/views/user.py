@@ -12,7 +12,6 @@ from zoommm.settings import TINAXINGID,TINAXINGKEY
 
 
 
-
 class Login(APIView):
     def post(self, request, *args, **kwargs):
         ret = {'code': 200, 'message': '登录成功'}
