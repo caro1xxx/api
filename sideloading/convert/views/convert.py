@@ -5,7 +5,7 @@ from convert.models import Node
 import json
 import requests
 from urllib.parse import quote
-from convert.tools import getCurrentTimestamp,formatTstoDatetimestamp
+from convert.tools import getCurrentTimestamp,formatTstoDatetimestamp,marzbanAuth
 from sideloading.settings import MARZAN_URL
 from django.core.cache import cache
 
@@ -15,11 +15,16 @@ class Convert(APIView):
     try:
       token = request.GET.get('token', None)
       target = request.GET.get('target', None)
+      marzbanToken = cache.get('token',None)
+      if marzbanToken is None:
+        marzbanToken = marzbanAuth()
+        cache.set('token', marzbanToken, 60 * 60 * 5)
       headers = {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': 'bearer '+cache.get("token")
+        'Authorization': 'bearer '+ marzbanToken
       }
+      print(marzbanToken)
       response = requests.get(f"{MARZAN_URL}/sub/{token}/info", headers=headers)
       if response.status_code == 200:
         links = response.json()["links"]

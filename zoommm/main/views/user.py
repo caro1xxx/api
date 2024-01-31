@@ -4,7 +4,7 @@ from main.models import Member,Plans,Orders,DiscountCode,Invites
 from django.core import serializers
 import json
 from main.tools import checkParams,encrypteToken,getCurrentTimestamp,generateRandomString,decodeToken,encrypteSHA224 ,\
-                    createOrder,getClientIp,toMD5,createMarzbanUser,getMarzbanUserProfile
+                    createOrder,getClientIp,toMD5,createMarzbanUser,getMarzbanUserProfile,marzbanAuth
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 from main.task import asyncAddInviteUser
