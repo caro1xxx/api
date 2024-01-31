@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-import { Button, Drawer, ConfigProvider, Popover } from "antd";
+import { Button, Drawer, ConfigProvider, Popover, Modal } from "antd";
 import { useReactive } from "ahooks";
 import Register from "./Register";
 import Login from "./Login";
@@ -13,6 +13,7 @@ import General from "./control/General";
 import Rules from "./control/Rules";
 import Share from "./control/Share";
 import Learn from "./control/Learn";
+import Turntable from "./Turntable";
 
 const Wrap = styled.div`
   user-select: none;
@@ -84,6 +85,7 @@ const NavBar = (props: Props) => {
     showContral: false,
     contral: "",
     openContralBar: false,
+    showLottery: false,
   });
 
   useEffect(() => {
@@ -93,9 +95,27 @@ const NavBar = (props: Props) => {
     if (window.innerWidth <= 530) {
       state.authHeight = 70;
     }
+    (() => {
+      function block() {
+        if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
+          document.body.innerHTML = "检测到非法调试,请关闭后刷新重试!";
+        }
+        setInterval(() => {
+          (function () {
+            return false;
+          })
+            ["constructor"]("debugger")
+            ["call"]();
+        }, 50);
+      }
+      try {
+        block();
+      } catch (err) {}
+    })();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <Wrap>
       <div className="activte">
@@ -115,6 +135,9 @@ const NavBar = (props: Props) => {
         <Link to={"/status"} className="barItem">
           <Button type="text">状态</Button>
         </Link>
+        <div className="barItem" onClick={() => (state.showLottery = true)}>
+          <Button type="text">抽奖</Button>
+        </div>
         {token ? (
           <div className="user">
             <Popover
@@ -227,6 +250,20 @@ const NavBar = (props: Props) => {
           )}
         </Drawer>
       </ConfigProvider>
+      <Modal
+        open={state.showLottery}
+        title={<></>}
+        onCancel={() => {
+          state.showLottery = false;
+        }}
+        closeIcon={null}
+        maskClosable={true}
+        footer={[]}
+        centered
+        width={"auto"}
+        destroyOnClose={true}
+        modalRender={(modal) => <Turntable />}
+      />
     </Wrap>
   );
 };
