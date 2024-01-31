@@ -24,7 +24,7 @@ class Member(models.Model):
   password = models.CharField(max_length=32)
   createTime = models.IntegerField()
   code = models.CharField(max_length=6)
-  expireTime = models.IntegerField(default=0)
+  expireTime = models.BigIntegerField(default=0)
   plan = models.ForeignKey(Plans, on_delete=models.CASCADE,null=True)
   system = models.BooleanField(default=True)
   concurrent = models.BooleanField(default=False)

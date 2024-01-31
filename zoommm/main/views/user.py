@@ -91,9 +91,7 @@ class Profile(APIView):
                     ret['data']['reset'] = userProfile['data_limit_reset_strategy']
                     ret['data']['status'] = userProfile['status']
                     ret['data']['subLink'] = f"https://subconvert.t7xqp3r.life/api/v1/side/ZOOM%E6%9C%BA%E5%9C%BA?token={userProfile['subscription_url'].replace('/sub/','')}"
-                    resposne = JsonResponse(ret)
-                    resposne ['Cache-Control'] = "max-age=1800"
-                    return resposne
+                    return JsonResponse(ret)
             return JsonResponse(ret)
         except Exception as e:
             print(str(e))
