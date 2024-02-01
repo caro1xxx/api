@@ -51,7 +51,8 @@ class Register(APIView):
                 ret['code'] = 408
                 ret['message'] = '该账号已被注册'
                 return JsonResponse(ret)
-            userFields = Member.objects.create(email=username, password=password, createTime=getCurrentTimestamp(),code=generateRandomString(6))
+            planFields = Plans.objects.filter(no=1).first()
+            userFields = Member.objects.create(email=username, password=password, createTime=getCurrentTimestamp(),code=generateRandomString(6),plan=planFields,expireTime=getCurrentTimestamp() + 60*60*24*30)
             ret['token'] = encrypteToken({"username": username})
             createMarzbanUser(username)
             if code is not None and len(code)==6:
