@@ -34,7 +34,7 @@ class Login(APIView):
             print(str(e))
             return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
 
-          
+
 class Register(APIView):
     def post(self, request, *args, **kwargs):
         ret = {'code': 200, 'message': '注册成功'}
@@ -51,8 +51,7 @@ class Register(APIView):
                 ret['code'] = 408
                 ret['message'] = '该账号已被注册'
                 return JsonResponse(ret)
-            planFields = Plans.objects.filter(no=1).first()
-            userFields = Member.objects.create(email=username, password=password, createTime=getCurrentTimestamp(),code=generateRandomString(6),plan=planFields,expireTime=getCurrentTimestamp() + 60*60*24*30)
+            userFields = Member.objects.create(email=username, password=password, createTime=getCurrentTimestamp(),code=generateRandomString(6))
             ret['token'] = encrypteToken({"username": username})
             createMarzbanUser(username)
             if code is not None and len(code)==6:
