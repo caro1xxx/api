@@ -11,7 +11,7 @@ import PlanItemLoading from "../components/PlanItemLoading";
 import Custom from "../components/Custom";
 import Notify from "../components/Notify";
 import { getStorage, setStorage } from "../utils/tools";
-import { useEffect } from "react";
+import { getNoftiy } from "../api/other";
 
 const Wrap = styled.div`
   padding-top: 100px;
@@ -213,6 +213,15 @@ const Home = (props: Props) => {
   const { data: flowPlans } = useRequest(() => getPlansToCount(3, "flow"), {
     cacheKey: "flowPlans",
   });
+  const { data: notify, loading: notifyLoding } = useRequest(getNoftiy, {
+    cacheKey: "notify",
+    onSuccess: (result) => {
+      let isNewCloseNotify = getStorage("closeNotify");
+      if (!isNewCloseNotify || parseInt(isNewCloseNotify) !== result.updateTime) {
+        state.showNotify = true;
+      }
+    },
+  });
   const pingMs = async (id: number, idx: number) => {
     state.serverDate[idx].loading = true;
     let result = await ping(id);
@@ -224,13 +233,6 @@ const Home = (props: Props) => {
     state.serverDate[idx].loading = false;
   };
 
-  useEffect(() => {
-    if (state.showNotify) return;
-    if (!getStorage("closeNotify")) {
-      state.showNotify = true;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   return (
     <Wrap>
       <div className="body">
@@ -435,11 +437,12 @@ const Home = (props: Props) => {
           </div>
         </Descriptioon>
       </div>
-      {state.showNotify && (
+      {state.showNotify && !notifyLoding && (
         <Notify
+          content={notify}
           close={() => {
             state.showNotify = false;
-            setStorage("closeNotify", 1);
+            setStorage("closeNotify", notify.updateTime);
           }}
         />
       )}

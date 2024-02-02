@@ -104,7 +104,7 @@ const Login = (props: Props) => {
             >
               <Input
                 prefix={<UserOutlined style={{ color: "#cecece" }} />}
-                placeholder="请输入注册邮箱"
+                placeholder="请输入登录邮箱"
                 style={{ width: "100%" }}
               />
             </Form.Item>

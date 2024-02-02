@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import { timeAgo } from "../utils/tools";
 
 const Wrap = styled.div`
@@ -43,6 +42,10 @@ const Wrap = styled.div`
 
 type Props = {
   close: () => void;
+  content: {
+    content: string;
+    updateTime: number;
+  };
 };
 
 const Notify = (props: Props) => {
@@ -77,7 +80,7 @@ const Notify = (props: Props) => {
         <div style={{ cursor: "default" }}>官方公告</div>
         <div style={{ flex: 1 }}></div>
         <span style={{ cursor: "default" }} className="update">
-          {timeAgo(1706720600000)}
+          {timeAgo(props.content.updateTime * 1000)}
         </span>
         <svg
           onClick={props.close}
@@ -96,17 +99,7 @@ const Notify = (props: Props) => {
           ></path>
         </svg>
       </div>
-      <div className="content">
-        🎉抽奖系统已上线🎉 <span>100%中奖率!</span> 点击导航栏"抽奖"按钮 欢迎加入TG群组:
-        <Link to={"https://t.me/ZoomCloud"} target="_blank">
-          t.me/ZoomCloud
-        </Link>
-        <div style={{ fontFamily: "Helvetica", marginTop: "5px" }} className="center">
-          <div>支持:support@zoomm.cloud</div>
-          <div style={{ flex: 1 }}></div>
-          <div>PM12:00 - AM04:00</div>
-        </div>
-      </div>
+      <div className="content" dangerouslySetInnerHTML={{ __html: props.content.content }}></div>
     </Wrap>
   );
 };

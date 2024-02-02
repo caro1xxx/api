@@ -43,3 +43,16 @@ export interface Server {
     nodeTag: number;
   };
 }
+
+export interface TicketTypes {
+  model: string;
+  pk: number;
+  fields: {
+    type: string;
+    content: string;
+    createTime: number;
+    user: string;
+    email: string;
+    state: number;
+  };
+}

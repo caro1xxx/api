@@ -14,6 +14,7 @@ import Rules from "./control/Rules";
 import Share from "./control/Share";
 import Learn from "./control/Learn";
 import Turntable from "./Turntable";
+import Ticket from "./control/Ticket";
 
 const Wrap = styled.div`
   user-select: none;
@@ -95,23 +96,23 @@ const NavBar = (props: Props) => {
     if (window.innerWidth <= 530) {
       state.authHeight = 70;
     }
-    (() => {
-      function block() {
-        if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
-          document.body.innerHTML = "检测到非法调试,请关闭后刷新重试!";
-        }
-        setInterval(() => {
-          (function () {
-            return false;
-          })
-            ["constructor"]("debugger")
-            ["call"]();
-        }, 50);
-      }
-      try {
-        block();
-      } catch (err) {}
-    })();
+    // (() => {
+    //   function block() {
+    //     if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
+    //       document.body.innerHTML = "检测到非法调试,请关闭后刷新重试!";
+    //     }
+    //     setInterval(() => {
+    //       (function () {
+    //         return false;
+    //       })
+    //         ["constructor"]("debugger")
+    //         ["call"]();
+    //     }, 50);
+    //   }
+    //   try {
+    //     block();
+    //   } catch (err) {}
+    // })();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -245,6 +246,8 @@ const NavBar = (props: Props) => {
             <Rules />
           ) : state.contral === "share" ? (
             <Share />
+          ) : state.contral === "ticket" ? (
+            <Ticket />
           ) : (
             <Learn />
           )}
