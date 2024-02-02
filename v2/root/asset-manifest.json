@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.dc15bbb7.css",
-    "main.js": "/static/js/main.9d314ba2.js",
+    "main.js": "/static/js/main.c50825b2.js",
     "static/media/Joyfont-ZeusGB-Flash-Diamond.woff": "/static/media/Joyfont-ZeusGB-Flash-Diamond.648691044d255aa68d6f.woff",
     "static/media/Joyfont-ZeusGB-Flash-Diamond.woff2": "/static/media/Joyfont-ZeusGB-Flash-Diamond.efb24af9dbd4edb152bc.woff2",
     "static/media/Consolas.woff": "/static/media/Consolas.6e16f5890479f812f1dd.woff",
@@ -12,10 +12,10 @@
     "static/media/BunglerLight-Regular.woff2": "/static/media/BunglerLight-Regular.ec53c4b2b851f90d8b3c.woff2",
     "index.html": "/index.html",
     "main.dc15bbb7.css.map": "/static/css/main.dc15bbb7.css.map",
-    "main.9d314ba2.js.map": "/static/js/main.9d314ba2.js.map"
+    "main.c50825b2.js.map": "/static/js/main.c50825b2.js.map"
   },
   "entrypoints": [
     "static/css/main.dc15bbb7.css",
-    "static/js/main.9d314ba2.js"
+    "static/js/main.c50825b2.js"
   ]
 }
