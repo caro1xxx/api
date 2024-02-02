@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from main.models import Member,Plans,Orders,DiscountCode,Invites
+from main.models import Member,Plans,Orders,DiscountCode,Invites,Config
 from django.core import serializers
 import json
 from main.tools import checkParams,encrypteToken,getCurrentTimestamp,generateRandomString,decodeToken,encrypteSHA224 ,\
@@ -42,6 +42,11 @@ class Register(APIView):
             username = json.loads(request.body).get('username', None)
             password = json.loads(request.body).get('password', None)
             code = json.loads(request.body).get('code', None)
+            isCloseReigster = Config.objects.filter(type='register').first()
+            if isCloseReigster.content == '1' or isCloseReigster.content == 1:
+                ret['code'] = 441
+                ret['message'] = '已关闭注册,下次开启时间请关注TG频道'
+                return JsonResponse(ret)
             if checkParams([username,password]) == False:
                 ret['code'] = 403
                 ret['message'] = '参数错误'

@@ -1,10 +1,11 @@
 from django.http import JsonResponse,HttpResponse
 from rest_framework.views import APIView
-from main.models import Member,Orders,Plans
+from main.models import Member,Orders,Plans,Config,TicketRecord
 import json
 from main.tools import checkParams,encrypteToken,getCurrentTimestamp,getCurrentYMD,toMD5,clearExpiredUseToSide,generateRandomString,changeMarzbanUserData,getMonthOverResetDate
 from main.task import asyncSendMail
 from zoommm.settings import ADMIN_EMAIL,TINAXINGKEY
+from django.core import serializers
 from main.task import asyncAddProperty
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_events, register_job
@@ -108,8 +109,55 @@ class Corn(APIView):
       return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
 
 
+class Notify(APIView):
+  def get(self, request, *args, **kwargs):
+    ret = {'code': 200, 'message': '成功'}
+    try:
+      notifyFiedls = Config.objects.filter(type='notify').first()
+      ret['data'] = {
+        "updateTime":notifyFiedls.updateTime,
+        "content":notifyFiedls.content
+      }
+      return JsonResponse(ret)
+    except Exception as e:
+      print(str(e))
+      return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
+
+
+class Ticket(APIView):
+  def get(self, request, *args, **kwargs):
+    ret = {'code': 200, 'message': '成功'}
+    try:
+      username = request.payload_data["username"]
+      ret['data'] = json.loads(serializers.serialize('json',TicketRecord.objects.filter(user=username).all().order_by('-createTime')))
+      return JsonResponse(ret)
+    except Exception as e:
+      print(str(e))
+      return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
+
+
+  def post(self, request, *args, **kwargs):
+    ret = {'code': 200, 'message': '成功'}
+    try:
+      username = request.payload_data["username"]
+      email = json.loads(request.body).get('email', None)
+      type = json.loads(request.body).get('type', None)
+      content = json.loads(request.body).get('content', None)
+
+      if checkParams([email,type,content]) == False:
+        ret['code'] = 413
+        ret['message'] = '请输入完整'
+      else:
+        TicketRecord.objects.create(type=type,content=content,createTime=getCurrentTimestamp(),user=username,email=email)
+      return JsonResponse(ret)
+    except Exception as e:
+      print(str(e))
+      return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
+
+
 def clearUser(target):
   clearExpiredUseToSide(target)
+
 
 # 注册定时任务并开始
 register_events(scheduler)

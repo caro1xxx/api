@@ -85,9 +85,25 @@ class LotteryRecord(models.Model):
   prize = models.CharField(max_length=32)
   time = models.IntegerField()
 
+
 class PrizePool(models.Model):
   name = models.CharField(max_length=32)
   type = models.CharField(max_length=16)
   icon = models.TextField()
   idx = models.IntegerField()
   weights = models.IntegerField()
+
+
+class Config(models.Model):
+  type = models.CharField(max_length=64)
+  content = models.TextField(null=True)
+  updateTime = models.IntegerField(null=True)
+
+
+class TicketRecord(models.Model):
+  type = models.CharField(max_length=64)
+  content = models.TextField()
+  createTime = models.IntegerField()
+  user = models.CharField(max_length=32)
+  email = models.CharField(max_length=32)
+  state = models.IntegerField(default=0)
