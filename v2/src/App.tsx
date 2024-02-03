@@ -6,6 +6,7 @@ import Order from "./pages/Order";
 import Sub from "./pages/Sub";
 import Status from "./pages/Status";
 import Settings from "./components/control/Settings";
+
 function App() {
   return (
     <div className="App">
