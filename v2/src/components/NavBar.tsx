@@ -13,8 +13,8 @@ import General from "./control/General";
 import Rules from "./control/Rules";
 import Share from "./control/Share";
 import Learn from "./control/Learn";
-import Turntable from "./Turntable";
 import Ticket from "./control/Ticket";
+// import SlotMachineComponent from "./SlotMachineComponent";
 
 const Wrap = styled.div`
   user-select: none;
@@ -136,9 +136,9 @@ const NavBar = (props: Props) => {
         <Link to={"/status"} className="barItem">
           <Button type="text">状态</Button>
         </Link>
-        <div className="barItem" onClick={() => (state.showLottery = true)}>
+        {/* <div className="barItem" onClick={() => (state.showLottery = true)}>
           <Button type="text">抽奖</Button>
-        </div>
+        </div> */}
         {token ? (
           <div className="user">
             <Popover
@@ -253,7 +253,7 @@ const NavBar = (props: Props) => {
           )}
         </Drawer>
       </ConfigProvider>
-      <Modal
+      {/* <Modal
         open={state.showLottery}
         title={<></>}
         onCancel={() => {
@@ -263,10 +263,10 @@ const NavBar = (props: Props) => {
         maskClosable={true}
         footer={[]}
         centered
-        width={"auto"}
+        width={"400px"}
         destroyOnClose={true}
-        modalRender={(modal) => <Turntable />}
-      />
+        modalRender={(modal) => <SlotMachineComponent />}
+      /> */}
     </Wrap>
   );
 };
