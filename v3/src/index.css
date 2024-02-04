@@ -1,7 +1,7 @@
 body{
-  padding: 0px 30px;
   margin: 0;
-  background-color: #0d0c0d;
+  background-color: #0f0f0f;
+  color: #fff;
 }
 *{
   box-sizing: border-box;
@@ -11,6 +11,13 @@ body{
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.usenone{
+  user-select: none;
+  cursor: pointer;
+}
+*::-webkit-scrollbar {
+  display: none;
 }
 
 @font-face {
