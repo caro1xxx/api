@@ -9,17 +9,13 @@ from django.views.decorators.cache import cache_control
 
 
 class Plan(APIView):
-  @method_decorator(cache_control(public=True, max_age=1800))
+  # @method_decorator(cache_control(public=True, max_age=1800))
   def get(self, request, *args, **kwargs):
     ret = {'code': 200, 'message': '成功'}
     try:
-      count = request.GET.get('count', None)
       type = request.GET.get('type', 'cycle')
-      if count is None:
-        ret['data'] = json.loads(serializers.serialize('json', Plans.objects.all().order_by('pk')))
-      else:
-        ret['data'] = json.loads(serializers.serialize('json', Plans.objects.filter(type=type).order_by('pk')[:int(count)]))
+      ret['data'] = json.loads(serializers.serialize('json', Plans.objects.filter(type=type,state=True).order_by('idx')))
       return JsonResponse(ret)
     except Exception as e:
-        print(str(e))
-        return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
+      print(str(e))
+      return JsonResponse({'code': 500, 'message': '服务器繁忙,请稍后再试'})
