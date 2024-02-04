@@ -1,6 +1,14 @@
 import styled from "styled-components";
 import { Select, Badge, Modal } from "antd";
-import { Link } from "react-router-dom";
+import { useReactive } from "ahooks";
+import Login from "./Mods/Login";
+import Register from "./Mods/Register";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useEffect } from "react";
+import { getStorage, parseJwt } from "../utils/tools";
+import { byOrder, saveToken } from "../redux/modules/user";
+import Order from "./Mods/Order";
+import { Link, useLocation } from "react-router-dom";
 
 const Wrap = styled.div`
   position: fixed;
@@ -37,16 +45,79 @@ const Wrap = styled.div`
       padding-left: 10px;
       border-radius: 5px;
     }
+    .bars {
+      font-family: "HelveticaNeue";
+      padding: 0px 5px;
+      height: 40px;
+      background-color: #0f0f0f;
+      border-radius: 5px;
+      font-size: 13px;
+      > a {
+        border-radius: 3px;
+        color: #fff;
+        padding: 5px 20px;
+        text-decoration: none;
+      }
+    }
   }
 `;
 
 type Props = {};
 
 const NavBar = (props: Props) => {
+  const location = useLocation();
+  const dispatch = useAppDispatch();
+  const token = useAppSelector((state) => state.user.token);
+  const order = useAppSelector((state) => state.user.orderNo) as string;
+  const state = useReactive({
+    showLogin: false,
+    showRegister: false,
+    wechat: {
+      qr: "",
+      showWechatQr: false,
+    },
+  });
+
+  useEffect(() => {
+    if (getStorage("token")) {
+      dispatch(saveToken(getStorage("token")));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <Wrap className="center">
       <div className="body center">
         <div className="logo">ZOOMCLOUD</div>
+        <div style={{ flex: 1 }}></div>
+        <div className="bars center">
+          <Link
+            to="/"
+            style={{
+              backgroundColor: location.pathname === "/" ? "#69a25e" : "#0f0f0f",
+              color: location.pathname === "/" ? "#0f0f0f" : "#7c7c7c",
+            }}
+          >
+            首页
+          </Link>
+          <Link
+            to="/account"
+            style={{
+              backgroundColor: location.pathname === "/account" ? "#69a25e" : "#0f0f0f",
+              color: location.pathname === "/account" ? "#0f0f0f" : "#7c7c7c",
+            }}
+          >
+            账号提取
+          </Link>
+          <Link
+            to="/profile"
+            style={{
+              backgroundColor: location.pathname === "/profile" ? "#69a25e" : "#0f0f0f",
+              color: location.pathname === "/profile" ? "#0f0f0f" : "#7c7c7c",
+            }}
+          >
+            仪表盘
+          </Link>
+        </div>
         <div style={{ flex: 1 }}></div>
         <div className="item way center">
           <svg
@@ -109,7 +180,34 @@ const NavBar = (props: Props) => {
             ]}
           />
         </div>
-        <div className="item sign usenone">开始使用</div>
+        {token ? (
+          <div className="item usenone center">
+            {parseJwt(token).username}
+            <svg
+              onClick={() => {
+                localStorage.clear();
+                window.location.reload();
+              }}
+              style={{ marginLeft: "10px" }}
+              viewBox="0 0 1024 1024"
+              version="1.1"
+              xmlns="http://www.w3.org/2000/svg"
+              p-id="2336"
+              width="25"
+              height="25"
+            >
+              <path
+                d="M463.121779 125.44199c0-33.995255 29.188786-61.538565 65.182558-61.538565 35.999912 0 65.172325 27.54331 65.172325 61.538565l0 342.323553c0 33.985022-29.172413 61.533448-65.172325 61.533448-35.994796 0-65.182558-27.548426-65.182558-61.533448L463.121779 125.44199 463.121779 125.44199zM512.005117 960.095551c-224.976938 0-407.359778-172.21527-407.359778-384.640334 0-163.541727 108.297518-302.880215 260.71079-358.520443L365.356129 353.862353c-78.180594 46.232974-130.354883 128.068817-130.354883 221.592864 0 144.455019 124.027781 261.551948 277.004895 261.551948 152.98837 0 276.999778-117.096928 276.999778-261.551948 0-79.858816-38.009685-151.2334-97.760534-199.215204L691.245384 230.454696c134.977157 62.657039 228.110301 193.397708 228.110301 345.011778C919.364895 787.880281 736.982054 960.095551 512.005117 960.095551L512.005117 960.095551zM512.005117 960.095551"
+                fill="#d81e06"
+                p-id="2337"
+              ></path>
+            </svg>
+          </div>
+        ) : (
+          <div className="item sign usenone" onClick={() => (state.showLogin = true)}>
+            开始使用
+          </div>
+        )}
         <div className="item">
           <Badge color={"green"} dot={true}>
             <svg
@@ -183,23 +281,66 @@ const NavBar = (props: Props) => {
         </div>
       </div>
       <Modal
-        open={true}
+        open={state.showLogin}
         title={<></>}
-        // onCancel={() => {
-        //   state.showLottery = false;
-        // }}
+        onCancel={() => {
+          state.showLogin = false;
+        }}
         closeIcon={null}
         maskClosable={true}
         footer={[]}
         centered
-        width={"400px"}
+        width={"350px"}
         destroyOnClose={true}
         modalRender={(modal) => (
-          <div style={{ backgroundColor: "#161616", padding: "20px", borderRadius: "10px", pointerEvents: "auto" }}>
-            新面板开发中,内测已购用户如有问题请联系{" "}
-            <Link to="https://t.me/+TLIYTuYmkSliZmRi">t.me/+TLIYTuYmkSliZmRi</Link>
-          </div>
+          <Login
+            login={() => {
+              state.showLogin = false;
+              state.showRegister = true;
+            }}
+            close={() => {
+              state.showLogin = false;
+            }}
+          />
         )}
+      />
+      <Modal
+        open={state.showRegister}
+        title={<></>}
+        onCancel={() => {
+          state.showRegister = false;
+        }}
+        closeIcon={null}
+        maskClosable={true}
+        footer={[]}
+        centered
+        width={"350px"}
+        destroyOnClose={true}
+        modalRender={(modal) => (
+          <Register
+            login={() => {
+              state.showLogin = true;
+              state.showRegister = false;
+            }}
+            close={() => {
+              state.showLogin = false;
+            }}
+          />
+        )}
+      />
+      <Modal
+        open={order !== ""}
+        title={<></>}
+        onCancel={() => {
+          dispatch(byOrder(""));
+        }}
+        closeIcon={null}
+        maskClosable={true}
+        footer={[]}
+        centered
+        width={"350px"}
+        destroyOnClose={true}
+        modalRender={(modal) => <Order order={order} />}
       />
     </Wrap>
   );
