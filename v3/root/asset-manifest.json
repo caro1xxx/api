@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/static/css/main.b852bf77.css",
+    "main.js": "/static/js/main.2351e069.js",
+    "static/media/Joyfont-ZeusGB-Flash-Diamond.woff": "/static/media/Joyfont-ZeusGB-Flash-Diamond.648691044d255aa68d6f.woff",
+    "static/media/Joyfont-ZeusGB-Flash-Diamond.woff2": "/static/media/Joyfont-ZeusGB-Flash-Diamond.efb24af9dbd4edb152bc.woff2",
+    "static/media/Consolas.woff": "/static/media/Consolas.6e16f5890479f812f1dd.woff",
+    "static/media/Consolas.woff2": "/static/media/Consolas.ab1ba9e327610e4ca94d.woff2",
+    "static/media/HelveticaNeueBold.woff": "/static/media/HelveticaNeueBold.dc69603f215e6d10dc0a.woff",
+    "static/media/HelveticaNeueBold.woff2": "/static/media/HelveticaNeueBold.0884dfb76a5769861bff.woff2",
+    "static/media/BunglerLight-Regular.woff": "/static/media/BunglerLight-Regular.2e824bdf241aa562c97e.woff",
+    "static/media/BunglerLight-Regular.woff2": "/static/media/BunglerLight-Regular.ec53c4b2b851f90d8b3c.woff2",
+    "index.html": "/index.html",
+    "main.b852bf77.css.map": "/static/css/main.b852bf77.css.map",
+    "main.2351e069.js.map": "/static/js/main.2351e069.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b852bf77.css",
+    "static/js/main.2351e069.js"
+  ]
+}
