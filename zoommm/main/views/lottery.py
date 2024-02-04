@@ -1,9 +1,9 @@
 from django.http import JsonResponse
 from rest_framework.views import APIView
-from main.models import LotteryRecord,Member,PrizePool
+from main.models import LotteryRecord,Member,PrizePool,Plans
 from django.core import serializers
 import json
-from main.tools import getCurrentDate,generateRandomString,getCurrentTimestamp
+from main.tools import getCurrentDate,generateRandomString,getCurrentTimestamp,changeMarzbanUserData
 import random
 
 
@@ -47,6 +47,25 @@ class Lottery(APIView):
             }
             break
         lotteryItem = LotteryRecord.objects.create(code=f'ZOOMCLOUD{generateRandomString(7)}',date=getCurrentDate(),member=memberFields,prize=f'{ret["prize"]["name"]}-{ret["prize"]["type"]}',time=getCurrentTimestamp())
+        realFlow = 0
+        planTitle = 1.7
+        expire = getCurrentTimestamp() + 60*60*24
+        reset = 'no_reset'
+        if memberFields.plan is None:
+          realFlow = (int(lotteryItem.prize.replace("GB-流量","")) * 1073741824) / 1.7
+          memberFields.plan = Plans.objects.filter(no=14).first()
+          memberFields.expireTime = getCurrentTimestamp() + 60*60*24
+        else:
+          if memberFields.plan.time == 30:
+            planFlow = int(memberFields.plan.flow * 1073741824 / float(memberFields.plan.real))
+          elif memberFields.plan.time <= 360:
+            planFlow = (memberFields.plan.flow / (memberFields.plan.time / 30)  * 1073741824) / float(memberFields.plan.real)
+            reset = 'month'
+          realFlow = planFlow  + (int(lotteryItem.prize.replace("GB-流量","")) * 1073741824) / float(memberFields.plan.real)
+          expire = memberFields.expireTime
+          planTitle = memberFields.plan.real
+        changeMarzbanUserData(username,realFlow,expire,reset,planTitle)
+        memberFields.save()
         ret['prize']['code'] = lotteryItem.code
       return JsonResponse(ret)
     except Exception as e:

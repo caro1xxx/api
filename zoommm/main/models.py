@@ -34,6 +34,7 @@ class Member(models.Model):
   cloudRules = models.BooleanField(default=False)
   balance = models.CharField(max_length=10,default="0")
   nextReset = models.CharField(max_length=16,default='0')
+  temporaryTraffic = models.BigIntegerField(default=0,null=True)
 
 
 class Orders(models.Model):
