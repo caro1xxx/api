@@ -122,7 +122,6 @@ def createMarzbanUser(username):
         "data_limit": 0,
         "data_limit_reset_strategy": "no_reset",
         "status": "active",
-        "note": "1.7",
         "on_hold_timeout":0,
         "on_hold_expire_duration": 0
     }

@@ -87,11 +87,11 @@ class Profile(APIView):
                 "cloudRules":memberFields.cloudRules,
                 "reset":memberFields.nextReset
             }
-            if memberFields.expireTime > getCurrentTimestamp():
+            if memberFields.plan is not None:
                 userProfile = getMarzbanUserProfile(memberFields.email)
                 if userProfile != False:
-                    ret['data']["used"] = int(userProfile["used_traffic"] * memberFields.plan.real)
-                    ret['data']['remaining'] = int(userProfile["data_limit"]* memberFields.plan.real) -  int(userProfile["used_traffic"] * memberFields.plan.real)
+                    ret['data']["used"] =userProfile["used_traffic"]
+                    ret['data']['remaining'] =userProfile["data_limit"] - userProfile["used_traffic"]
                     ret['data']['reset'] = userProfile['data_limit_reset_strategy']
                     ret['data']['status'] = userProfile['status']
                     ret['data']['subLink'] = f"https://subconvert.t7xqp3r.life/api/v1/side/ZOOM%E6%9C%BA%E5%9C%BA?token={userProfile['subscription_url'].replace('/sub/','')}"
