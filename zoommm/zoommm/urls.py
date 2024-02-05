@@ -10,7 +10,7 @@ urlpatterns = [
     re_path(r'^api/v1/zoommm/login$', Login.as_view()),
     re_path(r'^api/v1/zoommm/register$', Register.as_view()),
     re_path(r'^api/v1/zoommm/plans$', Plan.as_view()),
-    # re_path(r'^api/v1/zoommm/order$', Order.as_view()),
+    re_path(r'^api/v1/zoommm/order$', Order.as_view()),
     re_path(r'^api/v1/zoommm/discount$', Discount.as_view()),
     re_path(r'^api/v1/zoommm/server$', Server.as_view()),
     re_path(r'^api/v1/zoommm/profile$', Profile.as_view()),

@@ -9,7 +9,7 @@ from django.views.decorators.cache import cache_control
 
 
 class Plan(APIView):
-  # @method_decorator(cache_control(public=True, max_age=1800))
+  @method_decorator(cache_control(public=True, max_age=1800))
   def get(self, request, *args, **kwargs):
     ret = {'code': 200, 'message': '成功'}
     try:
