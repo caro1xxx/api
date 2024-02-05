@@ -142,15 +142,6 @@ export const isIPv6Enabled = () => {
   return Promise.race([fetchPromise, timeoutPromise]);
 };
 
-// export const ipTolocation = () => {
-//   return fetch("https://api.bigdatacloud.net/data/client-ip")
-//     .then((res) => res.text())
-//     .then((value) => {
-//       console.log(value);
-//       return value;
-//     });
-// };
-
 export const ping = () => {
   return new Promise((resolve, reject) => {
     var img = new Image();

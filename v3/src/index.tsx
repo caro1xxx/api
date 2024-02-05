@@ -11,6 +11,9 @@ root.render(
   <Provider store={store}>
     <ConfigProvider
       theme={{
+        token: {
+          colorPrimary: "#fff",
+        },
         algorithm: theme.darkAlgorithm,
       }}
     >

@@ -2,9 +2,10 @@ import { TypesPlanItem } from "../types/state";
 import styled from "styled-components";
 import { createOrder } from "../api/order";
 import { useReactive } from "ahooks";
-import { useNavigate } from "react-router-dom";
+import { byOrder } from "../redux/modules/user";
 import { Button } from "antd";
 import { getCurrentTimeStamp } from "../utils/tools";
+import { useAppDispatch } from "../redux/hooks";
 
 type Props = {
   data: TypesPlanItem;
@@ -42,7 +43,7 @@ const Featrue = styled.div`
 `;
 
 const PlanItem = (props: Props) => {
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const state = useReactive({
     loading: false,
     giftTimer:
@@ -56,7 +57,7 @@ const PlanItem = (props: Props) => {
     if (state.loading) return;
     let result = await createOrder(planId);
     if (result.code === 200) {
-      navigate(`/order?no=${result.order}`);
+      dispatch(byOrder(result.order));
     }
     state.loading = false;
   };

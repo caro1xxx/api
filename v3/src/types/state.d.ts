@@ -26,3 +26,9 @@ export interface TypesPlanItem {
     welfare: boolean;
   };
 }
+
+export type FieldType = {
+  username?: string;
+  password?: string;
+  code?: string;
+};
