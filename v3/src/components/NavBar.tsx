@@ -9,6 +9,7 @@ import { getStorage, parseJwt } from "../utils/tools";
 import { byOrder, saveToken } from "../redux/modules/user";
 import Order from "./Mods/Order";
 import { Link, useLocation } from "react-router-dom";
+import Account from "./Mods/Account";
 
 const Wrap = styled.div`
   position: fixed;
@@ -72,6 +73,7 @@ const NavBar = (props: Props) => {
   const state = useReactive({
     showLogin: false,
     showRegister: false,
+    showAccount: false,
     wechat: {
       qr: "",
       showWechatQr: false,
@@ -100,7 +102,8 @@ const NavBar = (props: Props) => {
             首页
           </Link>
           <Link
-            to="/account"
+            to="/"
+            onClick={() => (state.showAccount = true)}
             style={{
               backgroundColor: location.pathname === "/account" ? "#69a25e" : "#0f0f0f",
               color: location.pathname === "/account" ? "#0f0f0f" : "#7c7c7c",
@@ -109,10 +112,10 @@ const NavBar = (props: Props) => {
             账号提取
           </Link>
           <Link
-            to="/profile"
+            to="/dashboard"
             style={{
-              backgroundColor: location.pathname === "/profile" ? "#69a25e" : "#0f0f0f",
-              color: location.pathname === "/profile" ? "#0f0f0f" : "#7c7c7c",
+              backgroundColor: location.pathname === "/dashboard" ? "#69a25e" : "#0f0f0f",
+              color: location.pathname === "/dashboard" ? "#0f0f0f" : "#7c7c7c",
             }}
           >
             仪表盘
@@ -173,7 +176,7 @@ const NavBar = (props: Props) => {
             }
             defaultValue="我要出国"
             style={{ width: 100 }}
-            bordered={false}
+            variant={"borderless"}
             options={[
               { value: "out", label: "我要出国" },
               { value: "in", label: "我要回国" },
@@ -341,6 +344,20 @@ const NavBar = (props: Props) => {
         width={"350px"}
         destroyOnClose={true}
         modalRender={(modal) => <Order order={order} />}
+      />
+      <Modal
+        open={state.showAccount}
+        title={<></>}
+        onCancel={() => {
+          state.showAccount = false;
+        }}
+        closeIcon={null}
+        maskClosable={true}
+        footer={[]}
+        centered
+        width={"350px"}
+        destroyOnClose={true}
+        modalRender={(modal) => <Account />}
       />
     </Wrap>
   );
